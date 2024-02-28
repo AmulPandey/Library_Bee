@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "262049939928",
+    "project_id": "library-bee-864f6",
+    "storage_bucket": "library-bee-864f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262049939928:android:2029608421ee646f57b2ad",
+        "android_client_info": {
+          "package_name": "com.example.LibraryBee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApOiIuiO8NWdARmHRLq_qXlBeHa7psXhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

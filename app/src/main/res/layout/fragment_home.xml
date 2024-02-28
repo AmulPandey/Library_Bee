@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C2185B"
+    tools:context=".home">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_dashboard"
+        tools:context=".HomeFragment">
+
+        <!--        <com.mikhaellopez.circularimageview.CircularImageView-->
+        <!--            android:id="@+id/homeProfile"-->
+        <!--            android:layout_width="62dp"-->
+        <!--            android:layout_marginTop="15dp"-->
+        <!--            android:layout_marginRight="15dp"-->
+        <!--            android:layout_height="62dp"-->
+        <!--            android:src="@drawable/profile"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            />-->
+
+        <ImageView
+            android:id="@+id/ama"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/logout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.927"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.036" />
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/btn1"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn2"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn3"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn4"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn5"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn6"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_btn"
+                android:contentDescription="btn"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+        </GridLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
