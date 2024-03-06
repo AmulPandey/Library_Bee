@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.stripe.android.PaymentConfiguration;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView btnview;
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PaymentConfiguration.init(this.getApplicationContext(), "pk_test_51OqyM0SDeine48rHkehE0UR9xcfpW05RvW7flN1glrwMPfMLsqmXg4nOpKjg5UlOu8mpDic1AxpHFLTtc6dIBX6l00EeYRJd2b");
 
         btnview=findViewById(R.id.btnview);
 
@@ -36,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
 //              else  if (id==R.id.nav_utilities){
 //                  loadfrag(new utilities(),false);
 //                }
-              else  if (id==R.id.nav_members){
-                  loadfrag(new contact(),false);
-                }
+//              else  if (id==R.id.nav_members){
+//                  loadfrag(new contact(),false);
+//                }
               else{//profile
                   loadfrag(new notifications(),true);
                 }

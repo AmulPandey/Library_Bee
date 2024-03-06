@@ -30,7 +30,6 @@ public class contact extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recontact);
         add = view.findViewById(R.id.add);
-
         // Initialize the adapter before using it
         adapter = new RecyclerContactadapter(requireContext(), arrcontact);
 
