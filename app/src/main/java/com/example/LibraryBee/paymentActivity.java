@@ -85,31 +85,53 @@ public class paymentActivity extends AppCompatActivity {
     }
 
 
-    private void initiateUpiPayment(String upiId, String paymentNote, String amount) {
-        Toast.makeText(this, "Prakriti randi", Toast.LENGTH_SHORT).show();
-        Uri uri = Uri.parse("upi://pay").buildUpon()
-                .appendQueryParameter("pa", upiId)  // Payee UPI ID
-                .appendQueryParameter("pn", "Payee Name")  // Payee Name
-                .appendQueryParameter("mc", "")  // Merchant Code (optional)
-                .appendQueryParameter("tid", "123456")  // Transaction ID (optional)
-                .appendQueryParameter("tr", "your-ref-id")  // Transaction Reference ID
-                .appendQueryParameter("tn", paymentNote)  // Transaction Note
-                .appendQueryParameter("am", amount)  // Transaction Amount
-                .appendQueryParameter("cu", "INR")  // Currency Code
+    private void initiateUpiPayment(String upiId, String paymentNote, String amountt) {
+
+
+
+
+
+
+
+
+
+
+
+        // Replace placeholders with your actual values
+        String payeeVpa = "zomato-order@paytm"; // Replace with your merchant VPA
+        String payeeName = "Zomato Ltd"; // Replace with your merchant name
+        String transactionRefId = "505101156972"; // Replace with unique transaction ID
+        String transactionNote = "Buying Russian"; // Replace with transaction description
+        double amount = 100.00; // Replace with transaction amount
+        String currency = "INR"; // Replace with currency code (usually INR for India)
+
+// Build the URI for the UPI intent
+        Uri uri = new Uri.Builder()
+                .scheme("upi")
+                .authority("pay")
+                .appendQueryParameter("pa", payeeVpa)
+                .appendQueryParameter("pn", payeeName)
+                .appendQueryParameter("mc", "") // Merchant code (optional)
+                .appendQueryParameter("tr", transactionRefId)
+                .appendQueryParameter("tn", transactionNote)
+                .appendQueryParameter("am", String.valueOf(amount))
+                .appendQueryParameter("cu", currency)
                 .build();
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
+// Create the UPI intent
+        Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
+        upiPayIntent.setData(uri);
 
-
-        // Check if there is a UPI app available on the user's device
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE);
+// Check if there's a UPI app installed
+        if (upiPayIntent.resolveActivity(getPackageManager()) != null) {
+            // Create a chooser intent to allow the user to select a UPI app
+            Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
+            startActivityForResult(chooser, UPI_PAYMENT_REQUEST_CODE); // Replace with your request code
         } else {
-            // Handle case where UPI app is not available
-            // You may want to redirect the user to download a UPI app from the Play Store
-            Toast.makeText(this, "randi", Toast.LENGTH_SHORT).show();
+            // No UPI app found, inform the user
+            Toast.makeText(this, "No UPI app found, please install one to continue", Toast.LENGTH_SHORT).show();
         }
+
     }
 
 
