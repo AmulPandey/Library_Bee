@@ -9,9 +9,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.LibraryBee.Login;
+import com.example.LibraryBee.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Signup extends AppCompatActivity {
 
@@ -80,6 +84,10 @@ public class Signup extends AppCompatActivity {
                             // Set the initial subscription status (false for a new user)
                             boolean isSubscribed = false;
 
+                            // Set the initial last payment timestamp to the current time
+
+
+
                             // Save additional user data to the Firebase Realtime Database
                             User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
                             usersDatabase.child(userId).setValue(user);
@@ -96,4 +104,5 @@ public class Signup extends AppCompatActivity {
         });
     }
 }
+
 

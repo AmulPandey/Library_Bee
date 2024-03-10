@@ -44,7 +44,9 @@ public class HomeProfile extends Activity {
                     auth.signOut();
 
                     // Redirect to the login page
-                    startActivity(new Intent(this, Login.class)); // Use 'this' instead of requireActivity()
+                    Intent loginIntent = new Intent(HomeProfile.this, Login.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(loginIntent);
                     finish(); // Close the current activity
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {

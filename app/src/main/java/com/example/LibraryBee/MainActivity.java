@@ -6,13 +6,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.stripe.android.PaymentConfiguration;
+import com.google.firebase.auth.FirebaseAuth;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth auth;
     BottomNavigationView btnview;
 
 
@@ -21,7 +25,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        PaymentConfiguration.init(this.getApplicationContext(), "pk_test_51OqyM0SDeine48rHkehE0UR9xcfpW05RvW7flN1glrwMPfMLsqmXg4nOpKjg5UlOu8mpDic1AxpHFLTtc6dIBX6l00EeYRJd2b");
+        auth = FirebaseAuth.getInstance();
+
+        String userId = auth.getCurrentUser().getUid();
+
+        // Schedule the subscription job
+
 
         btnview=findViewById(R.id.btnview);
 
