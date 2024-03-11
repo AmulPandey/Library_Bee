@@ -3,15 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/splash_back"
     tools:context=".paymentActivity">
 
   <ImageView
+      android:id="@+id/thousand"
       android:layout_width="match_parent"
       android:layout_height="200dp"
-      android:src="@drawable/rs_thousand"
-      android:id="@+id/thousand"/>
+      android:layout_marginTop="20dp"
+      android:src="@drawable/rs_1000" />
 
-    <Button
+  <Button
         android:id="@+id/send"
         android:layout_width="match_parent"
         android:layout_height="50dp"

@@ -61,7 +61,7 @@ public class home extends Fragment {
         fetchSubscriptionStatus();
         fetchUsername();
 
-        Button btn2 = view.findViewById(R.id.btn3);
+        Button btn2 = view.findViewById(R.id.btn2);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
