@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ public class home extends Fragment {
     private FirebaseAuth auth;
     private Button btn1; // Change the type to Button
 
+    private TextView usernameTextView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,7 @@ public class home extends Fragment {
         // Correctly find the ImageView
         ImageView homeProfile = view.findViewById(R.id.homepro);
         btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
-
+        usernameTextView = view.findViewById(R.id.usernameTextView);
         // Set click listener and start activity
         homeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,9 +59,10 @@ public class home extends Fragment {
 
         // Fetch and set the subscription status
         fetchSubscriptionStatus();
+        fetchUsername();
 
-        Button btn3 = view.findViewById(R.id.btn3);
-        btn3.setOnClickListener(new View.OnClickListener() {
+        Button btn2 = view.findViewById(R.id.btn3);
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), paymentActivity.class);
@@ -94,6 +98,51 @@ public class home extends Fragment {
                         } else {
                             // isSubscribed doesn't exist or is null
                             // Handle this case based on your application's logic
+                        }
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle errors here
+                    }
+                });
+            } else {
+                // User is not authenticated, handle accordingly (e.g., redirect to login screen)
+            }
+        }
+    }
+
+    private void fetchUsername() {
+        if (isAdded()) {
+            FirebaseUser currentUser = auth.getCurrentUser();
+
+            if (currentUser != null) {
+                String userId = currentUser.getUid();
+
+                // Reference to the user's username in Firebase
+                DatabaseReference usernameRef = FirebaseDatabase.getInstance().getReference("users")
+                        .child(userId)
+                        .child("username");
+
+                // Read the username value from Firebase
+                usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (isAdded() && dataSnapshot.exists()) {
+                            // Username exists, retrieve its value
+                            String username = dataSnapshot.getValue(String.class);
+                            // Set the username in the TextView
+                            if (usernameTextView != null) {
+                                usernameTextView.setText(username);
+                            } else {
+                                // Handle the case where usernameTextView is null (e.g., log an error)
+                            }
+                        } else {
+                            // Username doesn't exist or is null
+                            // Handle this case (e.g., display default message)
                         }
                     }
 

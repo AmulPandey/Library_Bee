@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class paymentActivity extends AppCompatActivity {
-    EditText amountEt, noteEt, nameEt, upiIdEt;
+
     Button send;
 
     final int UPI_PAYMENT = 0;
@@ -44,32 +44,30 @@ public class paymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment);
         initializeViews();
 
-        // Check if the Intent has extras
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            // Check if the key "stuffs" is present in the extras
-            if (bundle.containsKey("stuffs")) {
-                String stuffs = bundle.getString("stuffs");
-                Toast.makeText(getApplicationContext(), "stuff" + stuffs, Toast.LENGTH_SHORT).show();
-                amountEt.setText(stuffs);
-            } else {
-                Toast.makeText(getApplicationContext(), "No 'stuffs' key in extras", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(getApplicationContext(), "No extras in the Intent", Toast.LENGTH_SHORT).show();
-        }
+
+
+//        // Check if the Intent has extras
+//        Bundle bundle = getIntent().getExtras();
+//        if (bundle != null) {
+//            // Check if the key "stuffs" is present in the extras
+//            if (bundle.containsKey("stuffs")) {
+//                String stuffs = bundle.getString("stuffs");
+//                Toast.makeText(getApplicationContext(), "stuff" + stuffs, Toast.LENGTH_SHORT).show();
+//                amountEt.setText(stuffs);
+//            } else {
+//                Toast.makeText(getApplicationContext(), "No 'stuffs' key in extras", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Toast.makeText(getApplicationContext(), "No extras in the Intent", Toast.LENGTH_SHORT).show();
+//        }
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Getting the values from the EditTexts
-                String amount = amountEt.getText().toString();
-                String note = noteEt.getText().toString();
-                String name = nameEt.getText().toString();
-                String upiId = upiIdEt.getText().toString();
 
                 // upiIdEt.setFocusable(false);
-                payUsingUpi(amount, upiId, name, note);
+                payUsingUpi();
             }
         });
 
@@ -123,22 +121,19 @@ public class paymentActivity extends AppCompatActivity {
 
     void initializeViews() {
         send = findViewById(R.id.send);
-        amountEt = findViewById(R.id.amount_et);
-        noteEt = findViewById(R.id.note);
-        nameEt = findViewById(R.id.name);
-        upiIdEt = findViewById(R.id.upi_id);
     }
 
-    void payUsingUpi(String amount, String upiId, String name, String note) {
+    void payUsingUpi() {
+        String staticUpiId = "8565020378@okbizaxis";
+        String staticName = "Library Bee";
+        String staticAmount = "1.0";
 
         Uri uri = Uri.parse("upi://pay").buildUpon()
-                .appendQueryParameter("pa", upiId)
-                .appendQueryParameter("pn", name)
-                .appendQueryParameter("tn", note)
-                .appendQueryParameter("am", amount)
+                .appendQueryParameter("pa", staticUpiId)
+                .appendQueryParameter("pn", staticName)
+                .appendQueryParameter("am", staticAmount)
                 .appendQueryParameter("cu", "INR")
                 .build();
-
 
         Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
         upiPayIntent.setData(uri);
@@ -214,13 +209,12 @@ public class paymentActivity extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 Toast.makeText(paymentActivity.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
                 // Log.d("UPI", "responseStr: "+approvalRefNo);
-                Toast.makeText(this, "YOUR ORDER HAS BEEN PLACED\n THANK YOU AND ORDER AGAIN", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Thanks For Purchasing", Toast.LENGTH_LONG).show();
                 subscriptionRef.setValue(true);
 
                 long currentTimestamp = System.currentTimeMillis();
                 // Set the subscription timestamp
                 TimestampRef.setValue(currentTimestamp);
-
 
 
             }

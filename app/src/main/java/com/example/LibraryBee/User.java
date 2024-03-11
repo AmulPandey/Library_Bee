@@ -32,4 +32,8 @@ public class User {
     public void setSubscriptionTimestamp(long subscriptionTimestamp) {
         this.subscriptionTimestamp = subscriptionTimestamp;
     }
+
+    public String getUsername() {
+        return username;
+    }
 }

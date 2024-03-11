@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
+import android.app.ProgressDialog;
 import android.app.job.JobInfo;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,10 +28,17 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private BottomNavigationView btnview;
 
+    private ProgressDialog progressDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
 
         auth = FirebaseAuth.getInstance();
 
@@ -40,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
                 .child(userId)
                 .child("subscriptionTimestamp");
 
+        progressDialog.show();
         // Fetch the subscription timestamp from Firebase
         subscriptionTimestampRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                progressDialog.dismiss();
                 if (dataSnapshot.exists()) {
+
                     // Subscription timestamp exists, retrieve its value
                     long subscriptionTimestamp = dataSnapshot.getValue(Long.class);
 
@@ -65,11 +78,13 @@ public class MainActivity extends AppCompatActivity {
                     // Subscription timestamp doesn't exist or is null
                     // Handle this case based on your application's logic
                 }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle errors here
+                progressDialog.dismiss();
             }
         });
 
