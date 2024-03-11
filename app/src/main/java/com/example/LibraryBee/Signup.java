@@ -92,6 +92,8 @@ public class Signup extends AppCompatActivity {
                             User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
                             usersDatabase.child(userId).setValue(user);
 
+                            user.setSubscriptionTimestamp(System.currentTimeMillis());
+
                             // Sign up successful, navigate to user dashboard
                             Intent intent = new Intent(Signup.this, Login.class);
                             startActivity(intent);

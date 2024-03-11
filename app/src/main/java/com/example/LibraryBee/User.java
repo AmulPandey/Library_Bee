@@ -8,6 +8,8 @@ public class User {
     public String gender;
     public boolean isSubscribed; // Make this public
 
+    public long subscriptionTimestamp;
+
     // Add a default constructor
     public User() {
     }
@@ -20,5 +22,14 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.isSubscribed = isSubscribed;
+        this.subscriptionTimestamp = 0; // Initialize to 0 by default
+    }
+
+    public long getSubscriptionTimestamp() {
+        return subscriptionTimestamp;
+    }
+
+    public void setSubscriptionTimestamp(long subscriptionTimestamp) {
+        this.subscriptionTimestamp = subscriptionTimestamp;
     }
 }

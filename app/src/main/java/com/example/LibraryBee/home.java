@@ -25,9 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class home extends Fragment {
 
-
     private DatabaseReference subscriptionRef;
     private FirebaseAuth auth;
+    private Button btn1; // Change the type to Button
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,43 +37,89 @@ public class home extends Fragment {
         auth = FirebaseAuth.getInstance();
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-         //Correctly find the ImageView
+        // Correctly find the ImageView
         ImageView homeProfile = view.findViewById(R.id.homepro);
-        Button btn1 = view.findViewById(R.id.btn1);
-        Button btn3 = view.findViewById(R.id.btn3);
-
+        btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
 
         // Set click listener and start activity
         homeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HomeProfile.class); // Use getActivity() to get activity context
-                startActivity(intent); // Start the new activity
+                Intent intent = new Intent(getActivity(), HomeProfile.class);
+                startActivity(intent);
             }
         });
 
+        // Fetch and set the subscription status
+        fetchSubscriptionStatus();
 
-        // btn1 setup
-
-
-
+        Button btn3 = view.findViewById(R.id.btn3);
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), paymentActivity.class); // Use getActivity() to get activity context
-                startActivity(intent); // Start the new activity
+                Intent intent = new Intent(getActivity(), paymentActivity.class);
+                startActivity(intent);
             }
         });
 
         return view;
     }
 
+    private void fetchSubscriptionStatus() {
+        if (isAdded()) {
+            FirebaseUser currentUser = auth.getCurrentUser();
 
+            if (currentUser != null) {
+                String userId = currentUser.getUid();
+
+                // Reference to the user's isSubscribed status in Firebase
+                DatabaseReference isSubscribedRef = FirebaseDatabase.getInstance().getReference("users")
+                        .child(userId)
+                        .child("isSubscribed");
+
+                // Read the isSubscribed value from Firebase
+                isSubscribedRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (isAdded() && dataSnapshot.exists()) {
+                            // isSubscribed value exists, retrieve its value
+                            boolean isSubscribed = dataSnapshot.getValue(Boolean.class);
+
+                            // Update the UI based on the subscription status
+                            updateUI(isSubscribed);
+                        } else {
+                            // isSubscribed doesn't exist or is null
+                            // Handle this case based on your application's logic
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle errors here
+                    }
+                });
+            } else {
+                // User is not authenticated, handle accordingly (e.g., redirect to login screen)
+            }
+        }
+    }
+
+
+    private void updateUI(boolean isSubscribed) {
+        if (isSubscribed) {
+            // Set ACTIVE with green color
+            btn1.setText("ACTIVE");
+            btn1.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        } else {
+            // Set INACTIVE with red color
+            btn1.setText("INACTIVE");
+            btn1.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+        }
+    }
 }
+
 

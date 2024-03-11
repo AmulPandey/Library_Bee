@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class paymentActivity extends AppCompatActivity {
@@ -31,7 +32,11 @@ public class paymentActivity extends AppCompatActivity {
     final int UPI_PAYMENT = 0;
 
     private DatabaseReference subscriptionRef;
+
+    private DatabaseReference TimestampRef;
     private FirebaseAuth auth;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +84,11 @@ public class paymentActivity extends AppCompatActivity {
             // Reference to the user's subscription status in Firebase
             DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference("users");
             subscriptionRef = usersDatabase.child(userId).child("isSubscribed");
+            TimestampRef = usersDatabase.child(userId).child("subscriptionTimestamp");
 
             // Set the initial subscription status
             subscriptionRef.setValue(false);
-
+            TimestampRef.setValue(0);
 
             // Attach a ValueEventListener to check the subscription status
             subscriptionRef.addValueEventListener(new ValueEventListener() {
@@ -210,6 +216,13 @@ public class paymentActivity extends AppCompatActivity {
                 // Log.d("UPI", "responseStr: "+approvalRefNo);
                 Toast.makeText(this, "YOUR ORDER HAS BEEN PLACED\n THANK YOU AND ORDER AGAIN", Toast.LENGTH_LONG).show();
                 subscriptionRef.setValue(true);
+
+                long currentTimestamp = System.currentTimeMillis();
+                // Set the subscription timestamp
+                TimestampRef.setValue(currentTimestamp);
+
+
+
             }
             else if("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(paymentActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
