@@ -146,7 +146,6 @@ public class paymentActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
