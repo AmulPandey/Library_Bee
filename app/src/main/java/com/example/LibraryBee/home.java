@@ -1,21 +1,31 @@
 package com.example.LibraryBee;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+
 
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +35,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class home extends Fragment {
+
+    private Toolbar toolbar;
+
+    private DrawerLayout drawerLayout;
+
 
     private DatabaseReference subscriptionRef;
     private FirebaseAuth auth;
@@ -38,17 +53,52 @@ public class home extends Fragment {
 
         // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        toolbar = view.findViewById(R.id.toolbar);
+        drawerLayout = view.findViewById(R.id.drawer_layout);
+
+
+        NavigationView navigationView = view.findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                // Handle navigation drawer item clicks
+                int id = item.getItemId();
+                if (id == R.id.nav_profile_settings) {
+                    // Handle profile settings action
+                    Toast.makeText(getActivity(), "Profile Settings clicked", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_logout) {
+                    // Handle logout action
+                    showLogoutDialog(); // Call the method to show the logout dialog
+                }
+
+                // Close the drawer after handling the click
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                getActivity(), drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+
         // Correctly find the ImageView
         ImageView homeProfile = view.findViewById(R.id.homepro);
         btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
         usernameTextView = view.findViewById(R.id.usernameTextView);
         // Set click listener and start activity
+
+
+
+
         homeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,8 +120,11 @@ public class home extends Fragment {
             }
         });
 
+        registerForContextMenu(toolbar);
+
         return view;
     }
+
 
     private void fetchSubscriptionStatus() {
         if (isAdded()) {
@@ -99,7 +152,6 @@ public class home extends Fragment {
                             // isSubscribed doesn't exist or is null
                             // Handle this case based on your application's logic
                         }
-
 
 
                     }
@@ -157,7 +209,6 @@ public class home extends Fragment {
         }
     }
 
-
     private void updateUI(boolean isSubscribed) {
         if (isSubscribed) {
             // Set ACTIVE with green color
@@ -169,6 +220,30 @@ public class home extends Fragment {
             btn1.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
         }
     }
+
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (dialog, which) -> {
+                    // Sign out
+                    auth.signOut();
+
+                    // Redirect to the login page
+                    Intent loginIntent = new Intent(getActivity(), Login.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(loginIntent);
+                    getActivity().finish(); // Close the current activity
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    // User clicked Cancel, do nothing
+                });
+
+        builder.create().show();
+    }
+
+
 }
 
 

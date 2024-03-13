@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#C2185B"
@@ -11,6 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         android:background="@drawable/background_dashboard"
         tools:context=".HomeFragment">
 
@@ -18,17 +20,15 @@
             android:id="@+id/usernameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/gridLayout"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.038"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.052" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
         <ImageView
             android:id="@+id/homepro"
@@ -62,10 +62,10 @@
                 android:layout_row="0"
                 android:layout_column="0"
                 android:layout_margin="5dp"
-                android:text="status"
-                android:textColor="@color/black"
                 android:background="@drawable/custom_btn"
                 android:contentDescription="btn"
+                android:text="status"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -76,10 +76,10 @@
                 android:layout_row="0"
                 android:layout_column="1"
                 android:layout_margin="5dp"
-                android:text="BUY PLAN"
-                android:textColor="@color/black"
                 android:background="@drawable/custom_btn"
                 android:contentDescription="btn"
+                android:text="BUY PLAN"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -90,10 +90,10 @@
                 android:layout_row="1"
                 android:layout_column="0"
                 android:layout_margin="5dp"
-                android:text="Seat NO"
-                android:textColor="@color/black"
                 android:background="@drawable/custom_btn"
                 android:contentDescription="btn"
+                android:text="Seat NO"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -110,6 +110,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btn5"
                 android:layout_width="150dp"
@@ -128,7 +129,29 @@
 
         </GridLayout>
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:elevation="4dp"
+            app:navigationIcon="@drawable/movingicon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.045"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.006"
+            app:popupTheme="@style/Theme.Design.NoActionBar" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_drawer" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

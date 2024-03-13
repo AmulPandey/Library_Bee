@@ -3,9 +3,12 @@ package com.example.LibraryBee;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,4 +74,35 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
+    public void forgotPassword(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.forgetpass, null);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        EditText emailEditText = dialogView.findViewById(R.id.emailEditText);
+        Button submitBtn = dialogView.findViewById(R.id.submitBtn);
+
+        submitBtn.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+            if (!TextUtils.isEmpty(email)) {
+                // Proceed with sending the password reset email
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(Login.this, "Password reset email sent", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Login.this, "Failed to send reset email", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                dialog.dismiss();
+            } else {
+                Toast.makeText(Login.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog.show();
+    }
+
 }

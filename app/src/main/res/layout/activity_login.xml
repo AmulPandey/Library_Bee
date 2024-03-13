@@ -64,7 +64,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:text="Forgot Password?"
-        android:textColor="#00796B"/>
+        android:textColor="#00796B"
+        android:onClick="forgotPassword"/>
 
     <TextView
         android:id="@+id/signUpTextView"
