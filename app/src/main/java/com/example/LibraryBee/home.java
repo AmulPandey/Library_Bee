@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
@@ -47,6 +48,7 @@ public class home extends Fragment {
 
     private TextView usernameTextView;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,8 @@ public class home extends Fragment {
 
 
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
+        navigationView.setBackgroundColor(getResources().getColor(android.R.color.black));
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -83,29 +87,48 @@ public class home extends Fragment {
                 return true;
             }
         });
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                getActivity(),
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        ) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+               // navigationView.setBackgroundColor(getResources().getColor(android.R.color.black));
+                getActivity().invalidateOptionsMenu(); // If you have action items to hide/show
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                getActivity().invalidateOptionsMenu(); // If you have action items to hide/show
+            }
+        };
         drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+
+// Setting custom toggle icon
+        toggle.setDrawerIndicatorEnabled(false);
+        toggle.setHomeAsUpIndicator(R.drawable.ic_menu); // Set your custom drawable here
+        toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
 
 
         // Correctly find the ImageView
-        ImageView homeProfile = view.findViewById(R.id.homepro);
         btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
         usernameTextView = view.findViewById(R.id.usernameTextView);
         // Set click listener and start activity
 
-
-
-
-        homeProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HomeProfile.class);
-                startActivity(intent);
-            }
-        });
 
         // Fetch and set the subscription status
         fetchSubscriptionStatus();

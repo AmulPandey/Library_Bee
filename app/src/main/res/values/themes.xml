@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.Botttom_navigation" parent="Base.Theme.Botttom_navigation" />
+    <style name="NavigationViewStyle" parent="Widget.Design.NavigationView">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
 </resources>
