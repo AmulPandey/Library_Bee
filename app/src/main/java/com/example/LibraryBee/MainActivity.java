@@ -7,7 +7,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private BottomNavigationView btnview;
-
     private ProgressDialog progressDialog;
-
+    private JobScheduler jobScheduler;
+    private static final int JOB_ID = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +67,11 @@ public class MainActivity extends AppCompatActivity {
                     long currentTime = System.currentTimeMillis();
                     long timeDifference = currentTime - subscriptionTimestamp;
 
-                    // Schedule the job to run after one hour
-                    long intervalInMs = TimeUnit.HOURS.toMillis(1) - timeDifference;
-                    if (intervalInMs < 0) {
-                        // If the calculated interval is negative, set a default interval (e.g., one hour)
-                        intervalInMs = TimeUnit.HOURS.toMillis(1);
+                    // If payment was made within the last hour, schedule the job
+                    if (timeDifference < TimeUnit.HOURS.toMillis(1)) {
+                        scheduleJob(TimeUnit.HOURS.toMillis(1) - timeDifference);
                     }
-
-                    // Schedule the job
-                    scheduleJob(intervalInMs);
-                } else {
-                    // Subscription timestamp doesn't exist or is null
-                    // Handle this case based on your application's logic
                 }
-
             }
 
             @Override
@@ -110,20 +103,21 @@ public class MainActivity extends AppCompatActivity {
         btnview.setSelectedItemId(R.id.nav_home);
     }
 
-    private void scheduleJob(long intervalInMs) {
+    private void scheduleJob(long delay) {
         ComponentName jobServiceComponentName = new ComponentName(this, MyJobSchedulerJob.class);
 
-        int jobId = 123;
-        JobInfo jobInfo = new JobInfo.Builder(jobId, jobServiceComponentName)
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, jobServiceComponentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setMinimumLatency(intervalInMs) // Set the desired scheduling interval
+                .setMinimumLatency(delay) // Set the desired delay before running the job
                 .build();
 
         // Schedule the job
-        // ... (your job scheduling logic)
+        jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
     }
 
+    // Method to load fragments
     public void loadfrag(Fragment fragment, boolean flag) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -133,4 +127,14 @@ public class MainActivity extends AppCompatActivity {
             ft.replace(R.id.container, fragment);
         ft.commit();
     }
+
+    // Override onDestroy to cancel the job if the activity is destroyed
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (jobScheduler != null) {
+            jobScheduler.cancel(JOB_ID);
+        }
+    }
 }
+

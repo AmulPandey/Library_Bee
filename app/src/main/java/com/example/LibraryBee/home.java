@@ -42,6 +42,7 @@ public class home extends Fragment {
     private DrawerLayout drawerLayout;
 
 
+
     private DatabaseReference subscriptionRef;
     private FirebaseAuth auth;
     private Button btn1; // Change the type to Button

@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Yellow tint at the bottom -->
+    <item android:bottom="30dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFF" /> <!-- Changed color to yellow -->
+             /> <!-- Rounded corners -->
+        </shape>
+    </item>
+
+    <!-- White color at the top -->
+    <item android:top="300dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FBC02D" /> <!-- Changed color to white -->
+            <corners android:radius="45dp"
+                     android:bottomLeftRadius="0dp"
+                     android:bottomRightRadius="0dp"/> <!-- Rounded corners -->
+        </shape>
+    </item>
+
+</layer-list>

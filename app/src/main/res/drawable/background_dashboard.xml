@@ -3,8 +3,9 @@
         >
         <shape android:shape="rectangle" >
             <size android:height="100dp" />
-            <solid android:color="#F8B100"
+            <solid android:color="#FBC02D"
                 />
+           />
 
         </shape>
     </item>
@@ -12,7 +13,11 @@
     <item android:top="200dp">
         <shape android:shape="rectangle" >
             <size android:height="10dp" />
-            <solid android:color="@color/white" />
+            <solid android:color="@color/white"
+                />
+            <corners android:radius="15dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp"/>
         </shape>
     </item>
 </layer-list>

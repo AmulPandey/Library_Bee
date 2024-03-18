@@ -1,144 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_back"
-    android:orientation="vertical">
+    android:background="@drawable/background_yellow_tint">
 
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter Email"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"/>
-
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter Username"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"/>
-
-    <EditText
-        android:id="@+id/phonenumberEditText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter Phone number"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:inputType="number"
-        android:digits="0123456789"/>
-
-
-    <TextView
-        android:id="@+id/genderEditText"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:textSize="18dp"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter Gender"
-        android:gravity="bottom"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"/>
-
-    <RadioGroup
-        android:id="@+id/answerRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/opt1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="82dp"
-            android:minHeight="48dp"
-            android:text="Male"
-            android:textSize="17dp"
-            android:textColor="@color/white" />
-
-        <RadioButton
-            android:id="@+id/opt2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:minHeight="48dp"
-            android:text="Female"
-            android:textSize="17dp"
-            android:textColor="@color/white" />
-
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/passwordEditText"
+    <LinearLayout
+        android:id="@+id/registerLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:hint="Enter Password(8 digits)"
-        android:inputType="textPassword"
-        android:layout_gravity="center_horizontal"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1">
 
-    <EditText
-        android:id="@+id/passwordEditText_2"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:hint="Repeat Password"
-        android:inputType="textPassword"
-        android:layout_gravity="center_horizontal"
-        android:minHeight="48dp"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"/>
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:hint="Enter Email"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:hint="Enter Username"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <EditText
+            android:id="@+id/phonenumberEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:digits="0123456789"
+            android:hint="Enter Phone number"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
 
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="200dp"
-        android:layout_height="49dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/btnshape"
-        android:text="Register"
-        android:textColor="#212121" />
+        <TextView
+            android:id="@+id/genderEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:hint="Enter Gender"
+            android:layout_marginStart="5dp"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="18dp" />
+
+        <RadioGroup
+            android:id="@+id/answerRadioGroup"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/opt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Male"
+                android:textColor="@color/white"
+                android:textSize="17dp" />
+
+            <RadioButton
+                android:id="@+id/opt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:minHeight="48dp"
+                android:text="Female"
+                android:textColor="@color/white"
+                android:textSize="17dp" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:hint="Enter Password(6 dig)"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
+        <EditText
+            android:id="@+id/passwordEditText_2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:hint="Repeat Password"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
 
 
-</LinearLayout>
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="200dp"
+            android:layout_height="49dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btnshape"
+            android:text="Register"
+            android:textColor="#212121" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

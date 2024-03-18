@@ -6,20 +6,30 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private Button signupButton;
+
+    private TextView signUpTextView;
     private FirebaseAuth auth;
+
+    private Button loginAdminButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +40,8 @@ public class Login extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
-        signupButton = findViewById(R.id.signupButton);
+        signUpTextView = findViewById(R.id.signUpTextView);
+        loginAdminButton = findViewById(R.id.loginAdminButton);
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
@@ -68,11 +79,63 @@ public class Login extends AppCompatActivity {
                     });
         });
 
-        // Signup button click listener
-        signupButton.setOnClickListener(view -> {
+        // Signup click listener
+        signUpTextView.setOnClickListener(view -> {
+            // Navigate to the Signup activity
             Intent intent = new Intent(Login.this, Signup.class);
             startActivity(intent);
         });
+
+        // Login as Admin button click listener
+        loginAdminButton.setOnClickListener(view -> {
+            String adminEmail = "amulpandey007@gmail.com";
+            String adminPassword = "654321";
+
+            // Authenticate as admin using FirebaseAuth
+            auth.signInWithEmailAndPassword(adminEmail, adminPassword)
+                    .addOnCompleteListener(Login.this, task -> {
+                        if (task.isSuccessful()) {
+                            // Check if the admin entry exists in the database
+                            DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("admins").child(auth.getCurrentUser().getUid());
+                            adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (!snapshot.exists()) {
+                                        // Admin entry doesn't exist, create a new entry
+                                        Admin admin = new Admin(adminEmail); // Create an Admin object with admin details
+                                        adminRef.setValue(admin)
+                                                .addOnCompleteListener(task1 -> {
+                                                    if (task1.isSuccessful()) {
+                                                        // Admin entry created successfully
+                                                        Intent intent = new Intent(Login.this, AdminDashboardActivity.class);
+                                                        startActivity(intent);
+                                                        finish(); // Close login activity
+                                                    } else {
+                                                        // Failed to create admin entry
+                                                        Toast.makeText(Login.this, "Failed to create admin entry in the database", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                    } else {
+                                        // Admin entry already exists
+                                        Intent intent = new Intent(Login.this, AdminDashboardActivity.class);
+                                        startActivity(intent);
+                                        finish(); // Close login activity
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // Handle database error
+                                    Toast.makeText(Login.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            // Sign in failed, display error message
+                            Toast.makeText(Login.this, "Admin authentication failed. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
     }
 
     public void forgotPassword(View view) {

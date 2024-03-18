@@ -212,7 +212,6 @@ public class paymentActivity extends AppCompatActivity {
                 // Set the subscription timestamp
                 TimestampRef.setValue(currentTimestamp);
 
-
             }
             else if("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(paymentActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
