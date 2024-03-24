@@ -36,14 +36,11 @@ public class paymentActivity extends AppCompatActivity {
     private FirebaseAuth auth;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         initializeViews();
-
-
 
 //        // Check if the Intent has extras
 //        Bundle bundle = getIntent().getExtras();
@@ -71,7 +68,6 @@ public class paymentActivity extends AppCompatActivity {
         });
 
         auth = FirebaseAuth.getInstance();
-
         // Check if the user is authenticated
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
@@ -207,7 +203,6 @@ public class paymentActivity extends AppCompatActivity {
                 // Log.d("UPI", "responseStr: "+approvalRefNo);
                 Toast.makeText(this, "Thanks For Purchasing", Toast.LENGTH_LONG).show();
                 subscriptionRef.setValue(true);
-
                 long currentTimestamp = System.currentTimeMillis();
                 // Set the subscription timestamp
                 TimestampRef.setValue(currentTimestamp);

@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,14 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter your email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <Button
         android:id="@+id/submitBtn"
         android:layout_width="match_parent"
-        android:background="@drawable/custom_btn"
         android:layout_height="30dp"
-        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/custom_btn"
+        android:text="Submit"
         android:textColor="@color/black"
-        android:text="Submit" />
+        android:textStyle="bold"
+        tools:ignore="TouchTargetSizeCheck" />
 </LinearLayout>

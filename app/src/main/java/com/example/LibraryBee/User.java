@@ -36,4 +36,21 @@ public class User {
     public String getUsername() {
         return username;
     }
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public boolean isSubscribed(){ return  isSubscribed; }
 }

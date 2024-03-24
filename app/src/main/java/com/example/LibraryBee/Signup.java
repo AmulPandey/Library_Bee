@@ -8,12 +8,18 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.LibraryBee.Login;
 import com.example.LibraryBee.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +60,7 @@ public class Signup extends AppCompatActivity {
         // Initialize Firebase Realtime Database
         usersDatabase = FirebaseDatabase.getInstance().getReference("users");
 
+
         // Register button click listener
         registerButton.setOnClickListener(view -> {
             String email = emailEditText.getText().toString().trim();
@@ -74,36 +81,65 @@ public class Signup extends AppCompatActivity {
                 return;
             }
 
-            // Firebase Authentication - Create user
-            auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(Signup.this, task -> {
-                        if (task.isSuccessful()) {
-                            // Get the UID of the newly registered user
-                            String userId = auth.getCurrentUser().getUid();
+            // Check if email or phone number already exists
+            usersDatabase.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // User with the same email already exists
+                        Toast.makeText(Signup.this, "User with this email already exists", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // No user with the same email, check for phone number
+                        usersDatabase.orderByChild("phoneNumber").equalTo(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    // User with the same phone number already exists
+                                    Toast.makeText(Signup.this, "User with this phone number already exists", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // No user with the same email or phone number, proceed with registration
+                                    auth.createUserWithEmailAndPassword(email, password)
+                                            .addOnCompleteListener(Signup.this, task -> {
+                                                if (task.isSuccessful()) {
+                                                    // Get the UID of the newly registered user
+                                                    String userId = auth.getCurrentUser().getUid();
 
-                            // Set the initial subscription status (false for a new user)
-                            boolean isSubscribed = false;
+                                                    // Set the initial subscription status (false for a new user)
+                                                    boolean isSubscribed = false;
 
-                            // Set the initial last payment timestamp to the current time
+                                                    // Save additional user data to the Firebase Realtime Database
+                                                    User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
+                                                    usersDatabase.child(userId).setValue(user);
 
+                                                    user.setSubscriptionTimestamp(System.currentTimeMillis());
 
+                                                    // Sign up successful, navigate to user dashboard
+                                                    Intent intent = new Intent(Signup.this, Login.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    // Sign up failed, display error message
+                                                    Toast.makeText(Signup.this, "Registration failed. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            }
 
-                            // Save additional user data to the Firebase Realtime Database
-                            User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
-                            usersDatabase.child(userId).setValue(user);
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle error
+                            }
+                        });
+                    }
+                }
 
-                            user.setSubscriptionTimestamp(System.currentTimeMillis());
-
-                            // Sign up successful, navigate to user dashboard
-                            Intent intent = new Intent(Signup.this, Login.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            // Sign up failed, display error message
-                            Toast.makeText(Signup.this, "Registration failed. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle error
+                }
+            });
         });
+
     }
 }
 
