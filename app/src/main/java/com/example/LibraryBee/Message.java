@@ -6,6 +6,8 @@ public class Message {
     private String sender;
     private long timestamp;
 
+    private String formattedTimestamp;
+
     public Message() {
         // Required empty public constructor for Firebase
     }
@@ -26,5 +28,13 @@ public class Message {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public String getFormattedTimestamp() {
+        return formattedTimestamp;
+    }
+
+    public void setFormattedTimestamp(String formattedTimestamp) {
+        this.formattedTimestamp = formattedTimestamp;
     }
 }

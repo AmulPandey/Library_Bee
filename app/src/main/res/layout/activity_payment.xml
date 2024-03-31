@@ -3,26 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_back"
+    android:background="#E83F3F"
     tools:context=".paymentActivity">
 
   <ImageView
       android:id="@+id/thousand"
       android:layout_width="match_parent"
-      android:layout_height="200dp"
+      android:layout_height="500dp"
       android:layout_marginTop="20dp"
-      android:src="@drawable/rs_1000" />
+      android:src="@drawable/paymentinfo" />
 
   <Button
-        android:id="@+id/send"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Pay"
-        android:textStyle="bold"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        android:layout_below="@id/thousand"
-        android:background="@drawable/custom_btn"
-        android:layout_margin="25dp"/>
+      android:id="@+id/send"
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:layout_below="@id/thousand"
+      android:layout_marginStart="25dp"
+      android:layout_marginTop="35dp"
+      android:layout_marginEnd="25dp"
+      android:layout_marginBottom="25dp"
+      android:background="@drawable/custom_btn"
+      android:text="Pay"
+      android:textColor="@color/black"
+      android:textSize="15sp"
+      android:textStyle="bold" />
 
 </RelativeLayout>

@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:background="#FBC02D"
             android:orientation="horizontal"
             android:id="@+id/LLrow"
             android:padding="10dp">
@@ -42,6 +43,7 @@
                     android:id="@+id/textViewUsername"
                     android:text="user"
                     android:textSize="20sp"
+                    android:textColor="#ffff"
                     android:textStyle="bold">
 
                 </TextView>
@@ -52,6 +54,7 @@
                     android:id="@+id/textViewEmail"
                     android:text="email"
                     android:textSize="15sp"
+                    android:textColor="#ffff"
                     android:textStyle="bold">
 
                 </TextView>
@@ -63,6 +66,7 @@
                     android:text="Phone Number: "
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    android:textColor="#ffff"
                     android:visibility="gone"/>
 
                 <TextView
@@ -72,6 +76,7 @@
                     android:text="Gender: "
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    android:textColor="#ffff"
                     android:visibility="gone"/>
 
                 <TextView
@@ -81,6 +86,7 @@
                     android:text="Subscribed: "
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    android:textColor="#ffff"
                     android:visibility="gone"/>
 
                 <ImageView

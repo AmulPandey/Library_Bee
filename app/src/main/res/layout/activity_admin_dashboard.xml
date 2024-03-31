@@ -56,7 +56,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/custom_btn"
-            android:text="Allot Seat Number"
+            android:text="Seat Managment"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"

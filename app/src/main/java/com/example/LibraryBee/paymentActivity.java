@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class paymentActivity extends AppCompatActivity {
@@ -31,10 +30,17 @@ public class paymentActivity extends AppCompatActivity {
     final int UPI_PAYMENT = 0;
 
     private DatabaseReference subscriptionRef;
-
     private DatabaseReference TimestampRef;
-    private FirebaseAuth auth;
 
+    private DatabaseReference seatRef;
+
+    private DatabaseReference userseatNumberRef;
+
+    private  DatabaseReference usertimingSlotRef;
+
+
+    private String selectedSeatNumber;
+    private String selectedSlot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,53 +48,39 @@ public class paymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment);
         initializeViews();
 
-//        // Check if the Intent has extras
-//        Bundle bundle = getIntent().getExtras();
-//        if (bundle != null) {
-//            // Check if the key "stuffs" is present in the extras
-//            if (bundle.containsKey("stuffs")) {
-//                String stuffs = bundle.getString("stuffs");
-//                Toast.makeText(getApplicationContext(), "stuff" + stuffs, Toast.LENGTH_SHORT).show();
-//                amountEt.setText(stuffs);
-//            } else {
-//                Toast.makeText(getApplicationContext(), "No 'stuffs' key in extras", Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            Toast.makeText(getApplicationContext(), "No extras in the Intent", Toast.LENGTH_SHORT).show();
-//        }
+        // Get the selected seat number from the intent
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("selectedSeatNumber")) {
+            selectedSeatNumber = intent.getStringExtra("selectedSeatNumber");
+        }
+        if (intent != null && intent.hasExtra("selectedSlot")) {
+            selectedSlot = intent.getStringExtra("selectedSlot");
+        }
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Getting the values from the EditTexts
-
-                // upiIdEt.setFocusable(false);
                 payUsingUpi();
             }
         });
 
-        auth = FirebaseAuth.getInstance();
-        // Check if the user is authenticated
-        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            // User is authenticated, get their UID
             String userId = currentUser.getUid();
-
-            // Reference to the user's subscription status in Firebase
             DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference("users");
             subscriptionRef = usersDatabase.child(userId).child("isSubscribed");
+            userseatNumberRef = usersDatabase.child(userId).child("seatNumber");
+            usertimingSlotRef = usersDatabase.child(userId).child("timingSlot");
             TimestampRef = usersDatabase.child(userId).child("subscriptionTimestamp");
-
-            // Set the initial subscription status
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            seatRef = database.getReference("seats");
             subscriptionRef.setValue(false);
             TimestampRef.setValue(0);
 
-            // Attach a ValueEventListener to check the subscription status
             subscriptionRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Boolean isSubscribed = snapshot.getValue(Boolean.class);
-
                     if (isSubscribed != null && isSubscribed) {
                         // User has an active subscription
                         // Perform actions accordingly
@@ -105,14 +97,11 @@ public class paymentActivity extends AppCompatActivity {
 
                 }
 
-
             });
         } else {
             // User is not authenticated, handle accordingly (e.g., redirect to login screen)
         }
-
     }
-
 
     void initializeViews() {
         send = findViewById(R.id.send);
@@ -133,11 +122,8 @@ public class paymentActivity extends AppCompatActivity {
         Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
         upiPayIntent.setData(uri);
 
-        // will always show a dialog to user to choose an app
         Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
-
-        // check if intent resolves
-        if(null != chooser.resolveActivity(getPackageManager())) {
+        if (null != chooser.resolveActivity(getPackageManager())) {
             startActivityForResult(chooser, UPI_PAYMENT);
         } else {
             Toast.makeText(this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
@@ -153,18 +139,15 @@ public class paymentActivity extends AppCompatActivity {
                 if ((RESULT_OK == resultCode) || (resultCode == 11)) {
                     if (data != null) {
                         String trxt = data.getStringExtra("response");
-                        //Log.d("UPI", "onActivityResult: " + trxt);
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add(trxt);
                         upiPaymentDataOperation(dataList);
                     } else {
-                        //Log.d("UPI", "onActivityResult: " + "Return data is null");
                         ArrayList<String> dataList = new ArrayList<>();
                         dataList.add("nothing");
                         upiPaymentDataOperation(dataList);
                     }
                 } else {
-                    //Log.d("UPI", "onActivityResult: " + "Return data is null"); //when user simply back without payment
                     ArrayList<String> dataList = new ArrayList<>();
                     dataList.add("nothing");
                     upiPaymentDataOperation(dataList);
@@ -176,7 +159,6 @@ public class paymentActivity extends AppCompatActivity {
     private void upiPaymentDataOperation(ArrayList<String> data) {
         if (isConnectionAvailable(paymentActivity.this)) {
             String str = data.get(0);
-            //Log.d("UPIPAY", "upiPaymentDataOperation: "+str);
             String paymentCancel = "";
             if(str == null) str = "discard";
             String status = "";
@@ -198,21 +180,64 @@ public class paymentActivity extends AppCompatActivity {
             }
 
             if (status.equals("success")) {
-                //Code to handle successful transaction here.
                 Toast.makeText(paymentActivity.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
-                // Log.d("UPI", "responseStr: "+approvalRefNo);
                 Toast.makeText(this, "Thanks For Purchasing", Toast.LENGTH_LONG).show();
+
+                // Update seat status in Firebase
+                DatabaseReference seatToUpdateRef = seatRef.child(selectedSeatNumber);
+                seatToUpdateRef.child("number").setValue(selectedSeatNumber);
+                seatToUpdateRef.child("status").setValue(selectedSlot);
+
+                // Set subscription and timestamp values
                 subscriptionRef.setValue(true);
                 long currentTimestamp = System.currentTimeMillis();
-                // Set the subscription timestamp
                 TimestampRef.setValue(currentTimestamp);
+
+                // Delay setting isSubscribed to false after one minute
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                subscriptionRef.setValue(false);
+                                TimestampRef.setValue(0);
+                                seatToUpdateRef.child("status").setValue("Available");
+                            }
+                        },
+                        60000 // 60 seconds (1 minute) delay
+                );
+
 
             }
             else if("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(paymentActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
+
+                // Update seat status in Firebase
+                DatabaseReference seatToUpdateRef = seatRef.child(selectedSeatNumber);
+                seatToUpdateRef.child("number").setValue(selectedSeatNumber);
+                seatToUpdateRef.child("status").setValue(selectedSlot);
+                userseatNumberRef.setValue(selectedSeatNumber);
+                usertimingSlotRef.setValue(selectedSlot);
+
+                // Set subscription and timestamp values
+                subscriptionRef.setValue(true);
+                long currentTimestamp = System.currentTimeMillis();
+                TimestampRef.setValue(currentTimestamp);
+
+                // Delay setting isSubscribed to false after one minute
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                subscriptionRef.setValue(false);
+                                seatToUpdateRef.child("status").setValue("Available");
+                                userseatNumberRef.setValue("none");
+                                usertimingSlotRef.setValue("none");
+                                TimestampRef.setValue(0);
+                            }
+                        },
+                        60000 // 60 seconds (1 minute) delay
+                );
             }
             else {
-                Toast.makeText(paymentActivity.this, "Transaction failed.Please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(paymentActivity.this, "Transaction failed. Please try again", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(paymentActivity.this, "Internet connection is not available. Please check and try again", Toast.LENGTH_SHORT).show();
@@ -223,13 +248,10 @@ public class paymentActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.isConnected()
-                    && netInfo.isConnectedOrConnecting()
-                    && netInfo.isAvailable()) {
+            if (netInfo != null && netInfo.isConnected() && netInfo.isConnectedOrConnecting() && netInfo.isAvailable()) {
                 return true;
             }
         }
         return false;
     }
 }
-

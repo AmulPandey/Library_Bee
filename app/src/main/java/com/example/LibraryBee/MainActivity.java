@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private BottomNavigationView btnview;
     private ProgressDialog progressDialog;
-    private JobScheduler jobScheduler;
-    private static final int JOB_ID = 123;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,38 +45,29 @@ public class MainActivity extends AppCompatActivity {
 
         String userId = auth.getCurrentUser().getUid();
 
-        // Reference to the user's subscription timestamp in Firebase
-        DatabaseReference subscriptionTimestampRef = FirebaseDatabase.getInstance().getReference("users")
-                .child(userId)
-                .child("subscriptionTimestamp");
+        DatabaseReference seatsRef = FirebaseDatabase.getInstance().getReference().child("seats");
 
-        progressDialog.show();
-        // Fetch the subscription timestamp from Firebase
-        subscriptionTimestampRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        progressDialog.show(); // Show progress dialog before fetching data from Firebase
+
+        // Add seats data to Firebase (if not already added)
+        seatsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                progressDialog.dismiss();
-                if (dataSnapshot.exists()) {
-
-                    // Subscription timestamp exists, retrieve its value
-                    long subscriptionTimestamp = dataSnapshot.getValue(Long.class);
-
-                    // Calculate the time difference
-                    long currentTime = System.currentTimeMillis();
-                    long timeDifference = currentTime - subscriptionTimestamp;
-
-                    // If payment was made within the last hour, schedule the job
-                    if (timeDifference < TimeUnit.HOURS.toMillis(1)) {
-                        scheduleJob(TimeUnit.HOURS.toMillis(1) - timeDifference);
+                progressDialog.dismiss(); // Dismiss progress dialog after fetching data
+                if (!dataSnapshot.exists()) {
+                    for (int i = 1; i <= 20; i++) {
+                        String seatNumber = String.format("%03d", i);
+                        Seat seat = new Seat("Seat " + seatNumber, Seat.Status.AVAILABLE);
+                        // Push seat data under the "seats" node with seat number as key
+                        seatsRef.child(seatNumber).setValue(seat);
                     }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle errors here
-                progressDialog.dismiss();
+            public void onCancelled(DatabaseError databaseError) {
+                progressDialog.dismiss(); // Dismiss progress dialog if data fetching is canceled
+                // Handle errors
             }
         });
 
@@ -94,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     loadfrag(new maps(), false);
                 } else {
                     // Handle other menu items
-                    loadfrag(new notifications(),false);
+                    loadfrag(new notifications(), false);
                 }
                 return true;
             }
@@ -103,19 +93,8 @@ public class MainActivity extends AppCompatActivity {
         btnview.setSelectedItemId(R.id.nav_home);
     }
 
-    private void scheduleJob(long delay) {
-        ComponentName jobServiceComponentName = new ComponentName(this, MyJobSchedulerJob.class);
 
-        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, jobServiceComponentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setMinimumLatency(delay) // Set the desired delay before running the job
-                .build();
 
-        // Schedule the job
-        jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(jobInfo);
-    }
 
     // Method to load fragments
     public void loadfrag(Fragment fragment, boolean flag) {
@@ -128,13 +107,7 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-    // Override onDestroy to cancel the job if the activity is destroyed
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (jobScheduler != null) {
-            jobScheduler.cancel(JOB_ID);
-        }
-    }
+
+
 }
 

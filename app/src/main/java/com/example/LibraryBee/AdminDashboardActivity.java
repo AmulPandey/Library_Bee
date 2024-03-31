@@ -42,6 +42,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private Button userListButton;
 
+    private Button seat;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,12 +56,22 @@ public class AdminDashboardActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         userListButton = findViewById(R.id.userlistbutton);
+        seat = findViewById(R.id.button2);
 
         userListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start the UserListActivity
                 Intent intent = new Intent(AdminDashboardActivity.this,UserListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        seat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the UserListActivity
+                Intent intent = new Intent(AdminDashboardActivity.this ,SeatManagementActivity.class);
                 startActivity(intent);
             }
         });
@@ -72,8 +85,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
             }
         });
-
-
 
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -176,7 +187,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         String messageId = databaseReference.push().getKey();
 
         // Create a Message object
-        Message message = new Message(messageText, "admin@example.com", System.currentTimeMillis());
+        Message message = new Message(messageText, "LibraryBee", System.currentTimeMillis());
 
         // Save the message to Firebase Realtime Database
         databaseReference.child(messageId).setValue(message)
@@ -193,8 +204,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 
 
 }

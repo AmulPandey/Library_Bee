@@ -139,7 +139,7 @@ public class home extends Fragment {
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), paymentActivity.class);
+                Intent intent = new Intent(getActivity(), SeatSelectionActivity.class);
                 startActivity(intent);
             }
         });
