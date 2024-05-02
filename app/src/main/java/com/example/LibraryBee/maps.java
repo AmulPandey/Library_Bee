@@ -32,7 +32,7 @@ public class maps extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             LatLng kanpur = new LatLng(26.43491361249834, 80.32606457897013);
-            googleMap.addMarker(new MarkerOptions().position(kanpur).title("Marker in Kanpur"));
+            googleMap.addMarker(new MarkerOptions().position(kanpur).title("Library Bee"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(kanpur));
         }
     };

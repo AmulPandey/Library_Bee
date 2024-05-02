@@ -89,6 +89,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button3" />
 
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="21dp"
+            android:background="@drawable/custom_btn"
+            android:text="Request Handeling"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_send_message" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

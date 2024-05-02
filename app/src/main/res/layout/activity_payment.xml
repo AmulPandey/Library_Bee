@@ -3,15 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E83F3F"
+    android:background="#FBC02D"
     tools:context=".paymentActivity">
 
   <ImageView
       android:id="@+id/thousand"
       android:layout_width="match_parent"
       android:layout_height="500dp"
-      android:layout_marginTop="20dp"
-      android:src="@drawable/paymentinfo" />
+      android:layout_marginTop="0dp"
+      android:src="@drawable/paymentinfo"
+      android:scaleType="fitXY"
+      />
 
   <Button
       android:id="@+id/send"
@@ -19,11 +21,11 @@
       android:layout_height="50dp"
       android:layout_below="@id/thousand"
       android:layout_marginStart="25dp"
-      android:layout_marginTop="35dp"
+      android:layout_marginTop="22dp"
       android:layout_marginEnd="25dp"
       android:layout_marginBottom="25dp"
       android:background="@drawable/custom_btn"
-      android:text="Pay"
+      android:text="Confirm My Seat"
       android:textColor="@color/black"
       android:textSize="15sp"
       android:textStyle="bold" />

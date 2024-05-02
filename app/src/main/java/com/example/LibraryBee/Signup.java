@@ -1,5 +1,6 @@
 package com.example.LibraryBee;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,7 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Signup extends AppCompatActivity {
@@ -63,6 +67,12 @@ public class Signup extends AppCompatActivity {
 
         // Register button click listener
         registerButton.setOnClickListener(view -> {
+
+            ProgressDialog progressDialog = new ProgressDialog(Signup.this);
+            progressDialog.setMessage("Registering...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             String email = emailEditText.getText().toString().trim();
             String username = usernameEditText.getText().toString().trim();
             String phoneNumber = phonenumberEditText.getText().toString().trim();
@@ -72,11 +82,13 @@ public class Signup extends AppCompatActivity {
 
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(phoneNumber) ||
                     TextUtils.isEmpty(password) || TextUtils.isEmpty(repeatPassword)) {
+                progressDialog.dismiss();
                 Toast.makeText(Signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (!password.equals(repeatPassword)) {
+                progressDialog.dismiss();
                 Toast.makeText(Signup.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -87,6 +99,7 @@ public class Signup extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         // User with the same email already exists
+                        progressDialog.dismiss();
                         Toast.makeText(Signup.this, "User with this email already exists", Toast.LENGTH_SHORT).show();
                     } else {
                         // No user with the same email, check for phone number
@@ -95,11 +108,13 @@ public class Signup extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     // User with the same phone number already exists
+                                    progressDialog.dismiss();
                                     Toast.makeText(Signup.this, "User with this phone number already exists", Toast.LENGTH_SHORT).show();
                                 } else {
                                     // No user with the same email or phone number, proceed with registration
                                     auth.createUserWithEmailAndPassword(email, password)
                                             .addOnCompleteListener(Signup.this, task -> {
+                                                progressDialog.dismiss();
                                                 if (task.isSuccessful()) {
                                                     // Get the UID of the newly registered user
                                                     String userId = auth.getCurrentUser().getUid();
@@ -107,18 +122,21 @@ public class Signup extends AppCompatActivity {
                                                     // Set the initial subscription status (false for a new user)
                                                     boolean isSubscribed = false;
 
+                                                    String joiningDate = getCurrentDate();
+
                                                     // Save additional user data to the Firebase Realtime Database
                                                     User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
                                                     usersDatabase.child(userId).setValue(user);
-
+                                                    user.setJoiningDate(joiningDate);
                                                     user.setSubscriptionTimestamp(System.currentTimeMillis());
 
                                                     // Sign up successful, navigate to user dashboard
-                                                    Intent intent = new Intent(Signup.this, Login.class);
+                                                    Intent intent = new Intent(Signup.this, MainActivity.class);
                                                     startActivity(intent);
                                                     finish();
                                                 } else {
                                                     // Sign up failed, display error message
+                                                    progressDialog.dismiss();
                                                     Toast.makeText(Signup.this, "Registration failed. " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -140,6 +158,13 @@ public class Signup extends AppCompatActivity {
             });
         });
 
+    }
+
+    private String getCurrentDate() {
+        // Get current date in day/month/year format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date currentDate = new Date();
+        return dateFormat.format(currentDate);
     }
 }
 

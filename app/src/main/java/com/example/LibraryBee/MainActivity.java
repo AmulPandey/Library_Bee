@@ -1,6 +1,7 @@
 package com.example.LibraryBee;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FirebaseApp.initializeApp(this);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
@@ -57,9 +61,26 @@ public class MainActivity extends AppCompatActivity {
                 if (!dataSnapshot.exists()) {
                     for (int i = 1; i <= 20; i++) {
                         String seatNumber = String.format("%03d", i);
-                        Seat seat = new Seat("Seat " + seatNumber, Seat.Status.AVAILABLE);
+                        Seat seat = new Seat("Seat " + seatNumber, Seat.Status.AVAILABLE,0);
+
                         // Push seat data under the "seats" node with seat number as key
-                        seatsRef.child(seatNumber).setValue(seat);
+                        DatabaseReference newSeatRef = seatsRef.child(seatNumber);
+
+                        // Set reservation timestamp
+                        long reservationTimestamp = 0; // Assuming initial reservation timestamp is 0
+                        newSeatRef.child("reservationTimestamp").setValue(reservationTimestamp);
+
+                        // Set seat status and reserve status list
+                        newSeatRef.setValue(seat);
+                        newSeatRef.child("status").setValue(seat.getStatus().name());
+
+                        // Create a child node for reserve status list under the seat
+                        DatabaseReference reserveStatusRef = newSeatRef.child("reserveStatusList");
+
+                        // Add reserve statuses to the list
+                        reserveStatusRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false); // Assuming initially false
+                        reserveStatusRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
+                        reserveStatusRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
                     }
                 }
             }
@@ -70,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 // Handle errors
             }
         });
+
 
         btnview = findViewById(R.id.btnview);
 
@@ -93,6 +115,20 @@ public class MainActivity extends AppCompatActivity {
         btnview.setSelectedItemId(R.id.nav_home);
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Do you want to exit the app?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Close the app
+                    finishAffinity();
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    // Dismiss the dialog
+                    dialog.dismiss();
+                })
+                .show();
+    }
 
 
 

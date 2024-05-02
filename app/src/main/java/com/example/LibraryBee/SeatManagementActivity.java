@@ -41,10 +41,35 @@ public class SeatManagementActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     // Extract seat details
                     String number = snapshot.child("number").getValue(String.class);
-                    String statusString = snapshot.child("status").getValue(String.class);
+                    String status = snapshot.child("status").getValue(String.class);
+
+                    // Extract reserve status
+                    boolean morningReserved = false; // Default value if data is missing
+                    boolean eveningReserved = false; // Default value if data is missing
+                    boolean fullDayReserved = false; // Default value if data is missing
+
+// Check if the reserveStatusList node exists
+                    DataSnapshot reserveStatusSnapshot = snapshot.child("reserveStatusList");
+                    if (reserveStatusSnapshot.exists()) {
+                        // Extract reserve status if the node exists
+                        morningReserved = reserveStatusSnapshot.child("MORNING").getValue(Boolean.class);
+                        eveningReserved = reserveStatusSnapshot.child("EVENING").getValue(Boolean.class);
+                        fullDayReserved = reserveStatusSnapshot.child("FULL_DAY").getValue(Boolean.class);
+                    }
+                    // Construct reserve status string
+                    StringBuilder reserveStatusBuilder = new StringBuilder();
+                    if (!fullDayReserved) {
+                        reserveStatusBuilder.append("Morning: ").append(morningReserved ? "Reserved" : "Available").append(", ");
+                        reserveStatusBuilder.append("\nEvening: ").append(eveningReserved ? "Reserved" : "Available");
+                        reserveStatusBuilder.append("\nFull Day: ").append(fullDayReserved ? "Reserved" : "Available");
+                    } else {
+                        reserveStatusBuilder.append("Full Day: Reserved");
+                    }
+
 
                     // Append details to list
-                    seatDetailsList.add("Seat Number: " + number + ", Status: " + statusString);
+                    String seatDetails = "Seat Number: " + number + " -->Status: " + status + "\nReserve Status:\n" + reserveStatusBuilder.toString();
+                    seatDetailsList.add(seatDetails);
                 }
                 adapter.notifyDataSetChanged(); // Notify adapter for data change
             }

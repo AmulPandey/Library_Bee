@@ -8,6 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +46,12 @@ public class SeatAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
+        final View view;
+        if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.grid_item, parent, false);
+        } else {
+            view = convertView;
         }
 
         TextView textViewSeatNumber = view.findViewById(R.id.textViewSeatNumber);
@@ -51,54 +61,97 @@ public class SeatAdapter extends BaseAdapter {
 
         textViewSeatNumber.setText(seat.getNumber());
 
-        List<Seat.ReserveStatus> reserveStatusList = seat.getReserveStatusList();
-        if (reserveStatusList != null && !reserveStatusList.isEmpty()) {
-            StringBuilder reserveStatusText = new StringBuilder();
-            for (Seat.ReserveStatus reserveStatus : reserveStatusList) {
-                reserveStatusText.append(reserveStatus.toString()).append(", ");
-            }
-            textViewSlot.setVisibility(View.VISIBLE);
-            textViewSlot.setText(reserveStatusText.toString());
-        } else {
-            textViewSlot.setVisibility(View.GONE);
-        }
+        DatabaseReference seatRef = FirebaseDatabase.getInstance().getReference().child("seats").child(seat.getNumber());
 
-        switch (seat.getStatus()) {
-            case AVAILABLE:
-                view.setBackgroundColor(Color.WHITE);
-                break;
-            case SELECTED:
-                view.setBackgroundColor(Color.GREEN);
-                break;
-            case RESERVED:
-                int backgroundColor;
-                if (reserveStatusList != null && reserveStatusList.size() == 2) {
-                    // Seat has both morning and evening slots, set color to purple
-                    backgroundColor = Color.parseColor("#800080"); // Purple
-                } else if (reserveStatusList != null && !reserveStatusList.isEmpty()) {
-                    // Seat has only one slot
-                    switch (reserveStatusList.get(0)) {
-                        case FULL_DAY:
-                            backgroundColor = Color.RED;
-                            break;
-                        case MORNING:
-                            backgroundColor = Color.parseColor("#FFA500"); // Orange
-                            break;
-                        case EVENING:
-                            backgroundColor = Color.BLUE;
-                            break;
-                        default:
-                            backgroundColor = Color.WHITE; // Default color
-                            break;
+        seatRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String status = dataSnapshot.child("status").getValue(String.class);
+                    if (status != null) {
+                        List<Seat.ReserveStatus> reserveStatusList = new ArrayList<>();
+
+                        switch (status) {
+                            case "AVAILABLE":
+                                if (seat.getStatus() == Seat.Status.SELECTED) {
+                                    view.setBackgroundColor(Color.GREEN);
+                                } else {
+                                    view.setBackgroundColor(Color.WHITE);
+                                }
+                                break;
+                            default:
+                                view.setBackgroundColor(Color.WHITE);
+                                break;
+                        }
+
+                        for (DataSnapshot snapshot : dataSnapshot.child("reserveStatusList").getChildren()) {
+                            boolean reserved = snapshot.getValue(Boolean.class);
+                            if (reserved) {
+                                switch (snapshot.getKey()) {
+                                    case "MORNING":
+                                        reserveStatusList.add(Seat.ReserveStatus.MORNING);
+                                        break;
+                                    case "EVENING":
+                                        reserveStatusList.add(Seat.ReserveStatus.EVENING);
+                                        break;
+                                    case "FULL_DAY":
+                                        reserveStatusList.add(Seat.ReserveStatus.FULL_DAY);
+                                        break;
+                                }
+                            }
+                        }
+
+                        updateUI(view, reserveStatusList);
                     }
-                } else {
-                    backgroundColor = Color.WHITE; // Default color
                 }
-                view.setBackgroundColor(backgroundColor);
-                break;
-        }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
 
         return view;
+    }
+
+
+    // Method to update UI based on reserve status list
+    private void updateUI(View view, List<Seat.ReserveStatus> reserveStatusList) {
+        if (reserveStatusList != null) {
+            for (Seat.ReserveStatus status : reserveStatusList) {
+                switch (status) {
+                    case MORNING:
+                        view.setBackgroundColor(Color.parseColor("#FFA500")); // Orange
+                        break;
+                    case EVENING:
+                        view.setBackgroundColor(Color.BLUE);
+                        break;
+                    case FULL_DAY:
+                        view.setBackgroundColor(Color.RED);
+                        break;
+                    default:
+                        view.setBackgroundColor(Color.WHITE);
+                        break;
+                }
+            }
+
+            boolean isReservedForFullDay = reserveStatusList.contains(Seat.ReserveStatus.FULL_DAY);
+            boolean isReservedForMorning = reserveStatusList.contains(Seat.ReserveStatus.MORNING);
+            boolean isReservedForEvening = reserveStatusList.contains(Seat.ReserveStatus.EVENING);
+
+             //Make the seat unclickable if reserved for full day or both morning and evening
+
+            if (isReservedForMorning && isReservedForEvening) {
+                    view.setBackgroundColor(Color.parseColor("#800080")); // Purple
+
+            }
+
+
+            } else {
+            // Set default color for available seats
+            view.setBackgroundColor(Color.WHITE);
+        }
     }
 
 }

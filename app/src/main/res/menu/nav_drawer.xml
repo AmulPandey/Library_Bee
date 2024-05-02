@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_profile_settings"
-        android:title="Profile Settings"
+        android:id="@+id/nav_profile_change"
+        android:title="Change Profile"
         />
-    <item
-        android:id="@+id/nav_logout"
-        android:title="Logout" />
-    <item
-        android:id="@+id/nav_contact_us"
-        android:title="Contact Us" />
+
+    <group>
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/nav_contact_Library"
+            android:title="Contact Library" />
+
+        <item
+            android:id="@+id/nav_contact_developer"
+            android:title="Contact Developer" />
+
+    </group>
 </menu>

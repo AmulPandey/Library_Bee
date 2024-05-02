@@ -1,44 +1,40 @@
 package com.example.LibraryBee;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
+import com.google.firebase.database.*;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class paymentActivity extends AppCompatActivity {
 
     Button send;
 
-    final int UPI_PAYMENT = 0;
+    // Constants for request status
+    private static final int REQUEST_PENDING = 0;
+    private static final int REQUEST_APPROVED = 1;
+    private static final int REQUEST_REJECTED = 2;
 
+    private DatabaseReference requestRef;
     private DatabaseReference subscriptionRef;
     private DatabaseReference TimestampRef;
-
     private DatabaseReference seatRef;
-
     private DatabaseReference userseatNumberRef;
-
-    private  DatabaseReference usertimingSlotRef;
-
-
+    private DatabaseReference usertimingSlotRef;
     private String selectedSeatNumber;
     private String selectedSlot;
 
@@ -57,13 +53,28 @@ public class paymentActivity extends AppCompatActivity {
             selectedSlot = intent.getStringExtra("selectedSlot");
         }
 
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                payUsingUpi();
+                // Generate request and send to admin
+                generateAndSendRequest();
+                showConfirmationDialog();
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser != null) {
+                    String userId = currentUser.getUid();
+                    // Now you have the user ID
+                    // You can use this userId in your updateSubscriptionAndSeatStatus method
+                    updateSubscriptionAndSeatStatus(userId);
+                } else {
+                    // User is not logged in
+                    // Handle the scenario where there is no logged-in user
+                }
             }
         });
 
+        // Firebase initialization
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -77,6 +88,10 @@ public class paymentActivity extends AppCompatActivity {
             subscriptionRef.setValue(false);
             TimestampRef.setValue(0);
 
+            // Initialize reference to requests node in Firebase
+            requestRef = database.getReference("requests");
+
+            // Set listener for subscription changes
             subscriptionRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -94,9 +109,8 @@ public class paymentActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-
+                    // Handle onCancelled
                 }
-
             });
         } else {
             // User is not authenticated, handle accordingly (e.g., redirect to login screen)
@@ -107,151 +121,155 @@ public class paymentActivity extends AppCompatActivity {
         send = findViewById(R.id.send);
     }
 
-    void payUsingUpi() {
-        String staticUpiId = "8565020378@okbizaxis";
-        String staticName = "Library Bee";
-        String staticAmount = "1.0";
+    void generateAndSendRequest() {
+        // Get current user information
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            String userName = currentUser.getDisplayName(); // Get the username from Firebase Authentication
+            String userEmail = currentUser.getEmail();
 
-        Uri uri = Uri.parse("upi://pay").buildUpon()
-                .appendQueryParameter("pa", staticUpiId)
-                .appendQueryParameter("pn", staticName)
-                .appendQueryParameter("am", staticAmount)
-                .appendQueryParameter("cu", "INR")
-                .build();
+            // If the username is null, you can set it to the email address or any other default value
+            if (userName == null) {
+                userName = userEmail;
+            }
 
-        Intent upiPayIntent = new Intent(Intent.ACTION_VIEW);
-        upiPayIntent.setData(uri);
+            String price;
 
-        Intent chooser = Intent.createChooser(upiPayIntent, "Pay with");
-        if (null != chooser.resolveActivity(getPackageManager())) {
-            startActivityForResult(chooser, UPI_PAYMENT);
+
+            if ("Full Day".equals(selectedSlot)) {
+                price = "1000 rs/month";
+            } else {
+                price = "600 rs/month";
+            }
+
+            // Create a request object with user information and other details
+            Request request = new Request(userId, userName, userEmail, selectedSeatNumber, selectedSlot, price);
+
+            // Set the key as the userID when pushing the request to Firebase
+            DatabaseReference newRequestRef = requestRef.child(userId);
+            newRequestRef.setValue(request).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(paymentActivity.this, "Request sent to admin", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(paymentActivity.this, "Failed to send request. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         } else {
-            Toast.makeText(this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
+            // Handle the case where the current user is null (not authenticated)
+            // You may want to redirect the user to the login screen
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void showConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("THANKS FOR CONFIRMING YOUR SEAT\n\nYour seat has been booked temporarily for the next 12 hours. To make it permanent for a month, please go to Library Bee and make payment accordingly.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Perform any actions after confirming
+                dialog.dismiss(); // Dismiss the dialog
+            }
+        });
+        builder.show();
+    }
 
-        switch (requestCode) {
-            case UPI_PAYMENT:
-                if ((RESULT_OK == resultCode) || (resultCode == 11)) {
-                    if (data != null) {
-                        String trxt = data.getStringExtra("response");
-                        ArrayList<String> dataList = new ArrayList<>();
-                        dataList.add(trxt);
-                        upiPaymentDataOperation(dataList);
-                    } else {
-                        ArrayList<String> dataList = new ArrayList<>();
-                        dataList.add("nothing");
-                        upiPaymentDataOperation(dataList);
-                    }
-                } else {
-                    ArrayList<String> dataList = new ArrayList<>();
-                    dataList.add("nothing");
-                    upiPaymentDataOperation(dataList);
-                }
+
+    // Other methods...
+
+    private void updateSubscriptionAndSeatStatus(String userId) {
+        // Update user subscription in Firebase
+
+        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("isSubscribed");
+        userRef.setValue(true); // Set the user as subscribed
+        // Update seat status in Firebase
+
+        DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference("users");
+        userseatNumberRef = usersDatabase.child(userId).child("seatNumber");
+        usertimingSlotRef = usersDatabase.child(userId).child("timingSlot");
+        userseatNumberRef = usersDatabase.child(userId).child("seatNumber");
+        usertimingSlotRef = usersDatabase.child(userId).child("timingSlot");
+
+        long currentTimestamp = System.currentTimeMillis();
+        DatabaseReference TimestampRef = usersDatabase.child(userId).child("subscriptionTimestamp");
+        TimestampRef.setValue(currentTimestamp);
+
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference seatRef = database.getReference("seats"); // Update seat status to reserved
+
+        // Update seat status in Firebase
+        DatabaseReference seatToUpdateRef = seatRef.child(selectedSeatNumber);
+        seatToUpdateRef.child("number").setValue(selectedSeatNumber);
+        seatToUpdateRef.child("status").setValue("RESERVED");
+        userseatNumberRef.setValue(selectedSeatNumber);
+        usertimingSlotRef.setValue(selectedSlot);
+
+        // Perform additional actions based on selected slot (e.g., update reserve status list)
+        // Remember to handle different slot types (morning, evening, full day) accordingly
+        // For example:
+        DatabaseReference reserveStatusListRef = seatToUpdateRef.child("reserveStatusList");
+        // Update reserve status based on the user's timing slot
+        switch (selectedSlot) {
+            case "Morning":
+                reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(true);
+                break;
+            case "Evening":
+                reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(true);
+                break;
+            case "Full Day":
+                reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(true);
+                break;
+            default:
+                // Handle unknown slot
                 break;
         }
-    }
 
-    private void upiPaymentDataOperation(ArrayList<String> data) {
-        if (isConnectionAvailable(paymentActivity.this)) {
-            String str = data.get(0);
-            String paymentCancel = "";
-            if(str == null) str = "discard";
-            String status = "";
-            String approvalRefNo = "";
-            String response[] = str.split("&");
-            for (int i = 0; i < response.length; i++) {
-                String equalStr[] = response[i].split("=");
-                if(equalStr.length >= 2) {
-                    if (equalStr[0].toLowerCase().equals("Status".toLowerCase())) {
-                        status = equalStr[1].toLowerCase();
-                    }
-                    else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
-                        approvalRefNo = equalStr[1];
+        long reservationTimestamp = System.currentTimeMillis();
+        seatToUpdateRef.child("reservationTimestamp").setValue(reservationTimestamp);
+
+        // Create a ScheduledThreadPoolExecutor with a single thread
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+
+        // Delay setting isSubscribed to false after one minute
+        long delayInMilliseconds = 12L * 60 * 60 * 1000;
+        executor.schedule(() -> {
+            // Retrieve the reservation timestamp from Firebase
+            seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Long reservedAt = dataSnapshot.getValue(Long.class);
+                        if (reservedAt != null && System.currentTimeMillis() - reservedAt >= delayInMilliseconds) {
+                            // More than 12 hours have passed since reservation, revert changes
+                            userRef.setValue(false);
+                            seatToUpdateRef.child("status").setValue("AVAILABLE");
+                            reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
+                            reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
+                            reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
+                            userseatNumberRef.setValue("none");
+                            usertimingSlotRef.setValue("none");
+                            TimestampRef.setValue(0);
+
+                            DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("requests");
+                            requestsRef.child(userId).child("rejected").setValue(true);
+                            // Also remove the reservation timestamp
+                            seatToUpdateRef.child("reservationTimestamp").removeValue();
+                        }
                     }
                 }
-                else {
-                    paymentCancel = "Payment cancelled by user.";
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle onCancelled
                 }
-            }
-
-            if (status.equals("success")) {
-                Toast.makeText(paymentActivity.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
-                Toast.makeText(this, "Thanks For Purchasing", Toast.LENGTH_LONG).show();
-
-                // Update seat status in Firebase
-                DatabaseReference seatToUpdateRef = seatRef.child(selectedSeatNumber);
-                seatToUpdateRef.child("number").setValue(selectedSeatNumber);
-                seatToUpdateRef.child("status").setValue(selectedSlot);
-
-                // Set subscription and timestamp values
-                subscriptionRef.setValue(true);
-                long currentTimestamp = System.currentTimeMillis();
-                TimestampRef.setValue(currentTimestamp);
-
-                // Delay setting isSubscribed to false after one minute
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                subscriptionRef.setValue(false);
-                                TimestampRef.setValue(0);
-                                seatToUpdateRef.child("status").setValue("Available");
-                            }
-                        },
-                        60000 // 60 seconds (1 minute) delay
-                );
+            });
+        }, delayInMilliseconds, TimeUnit.MILLISECONDS);
 
 
-            }
-            else if("Payment cancelled by user.".equals(paymentCancel)) {
-                Toast.makeText(paymentActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
-
-                // Update seat status in Firebase
-                DatabaseReference seatToUpdateRef = seatRef.child(selectedSeatNumber);
-                seatToUpdateRef.child("number").setValue(selectedSeatNumber);
-                seatToUpdateRef.child("status").setValue(selectedSlot);
-                userseatNumberRef.setValue(selectedSeatNumber);
-                usertimingSlotRef.setValue(selectedSlot);
-
-                // Set subscription and timestamp values
-                subscriptionRef.setValue(true);
-                long currentTimestamp = System.currentTimeMillis();
-                TimestampRef.setValue(currentTimestamp);
-
-                // Delay setting isSubscribed to false after one minute
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                subscriptionRef.setValue(false);
-                                seatToUpdateRef.child("status").setValue("Available");
-                                userseatNumberRef.setValue("none");
-                                usertimingSlotRef.setValue("none");
-                                TimestampRef.setValue(0);
-                            }
-                        },
-                        60000 // 60 seconds (1 minute) delay
-                );
-            }
-            else {
-                Toast.makeText(paymentActivity.this, "Transaction failed. Please try again", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(paymentActivity.this, "Internet connection is not available. Please check and try again", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static boolean isConnectionAvailable(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.isConnected() && netInfo.isConnectedOrConnecting() && netInfo.isAvailable()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

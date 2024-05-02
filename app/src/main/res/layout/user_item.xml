@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="#FBC02D"
+            android:background="#FFFF"
             android:orientation="horizontal"
             android:id="@+id/LLrow"
             android:padding="10dp">
@@ -24,6 +24,8 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:id="@+id/imgcontact"
+                android:focusable="true"
+                android:clickable="true"
                 android:contentDescription="Contact_Image"
                 android:src="@drawable/contactpng">
 
@@ -43,58 +45,127 @@
                     android:id="@+id/textViewUsername"
                     android:text="user"
                     android:textSize="20sp"
-                    android:textColor="#ffff"
+                    android:textColor="@color/black"
                     android:textStyle="bold">
 
                 </TextView>
 
                 <TextView
+                    android:id="@+id/textViewUserid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UserId: "
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <!-- Additional details layout -->
+                <LinearLayout
+                    android:id="@+id/additionalDetailsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textViewEmail"
-                    android:text="email"
-                    android:textSize="15sp"
-                    android:textColor="#ffff"
-                    android:textStyle="bold">
+                    android:orientation="vertical">
 
-                </TextView>
+                    <!-- Add all TextViews for additional details here -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textViewEmail"
+                        android:text="email"
+                        android:textSize="15sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/textViewPhoneNumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone Number: "
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#ffff"
-                    android:visibility="gone"/>
+                    </TextView>
 
-                <TextView
-                    android:id="@+id/textViewGender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gender: "
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#ffff"
-                    android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/textViewPhoneNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Phone Number: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/textViewSubscription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Subscribed: "
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="#ffff"
-                    android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/textViewGender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gender: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/textViewSubscription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Subscribed: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/textViewseatNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seat No: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/textViewtimingSlot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Slot: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/textViewjoiningDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Joined In: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/textViewleavingDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Leaved In: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/textViewSubsdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last Subscription: "
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"/>
+                    <!-- Add more TextViews for additional details as needed -->
+                    <!-- Make sure to set their visibility to gone by default -->
+
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/btnViewMoreInfo"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_gravity="right"
-                    android:onClick="onViewMoreInfoClick"
+                    android:onClick="toggleVisibility"
                     android:src="@drawable/moreinfo"
                     tools:ignore="TouchTargetSizeCheck" />
 

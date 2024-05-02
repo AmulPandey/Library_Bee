@@ -1,16 +1,24 @@
 package com.example.LibraryBee;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,9 +31,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SeatSelectionActivity extends AppCompatActivity {
 
@@ -37,6 +42,12 @@ public class SeatSelectionActivity extends AppCompatActivity {
     private String selectedSlot = "";
     private String selectedSeatNumber = "";
     private DatabaseReference seatsRef;
+    private DatabaseReference usersRef;
+
+    private  FirebaseUser currentUser;
+
+    private boolean flag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,68 +61,194 @@ public class SeatSelectionActivity extends AppCompatActivity {
         seatsList = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
             String seatNumber = String.format("%03d", i);
-            seatsList.add(new Seat(seatNumber, Seat.Status.AVAILABLE));
+            seatsList.add(new Seat(seatNumber, Seat.Status.AVAILABLE,0));
         }
 
         seatAdapter = new SeatAdapter(this, seatsList);
         gridView.setAdapter(seatAdapter);
 
         seatsRef = FirebaseDatabase.getInstance().getReference().child("seats");
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        radioGroupSlots.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = findViewById(checkedId);
-                selectedSlot = radioButton.getText().toString();
-                updateSeatAvailability();
-            }
+
+        radioGroupSlots.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton radioButton = findViewById(checkedId);
+            selectedSlot = radioButton.getText().toString();
+            updateSeatAvailability();
         });
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Seat selectedSeat = seatsList.get(position);
-                if (selectedSeat.getStatus() == Seat.Status.AVAILABLE) {
-                    // Deselect all seats
-                    deselectAllSeats();
-                    // Select the clicked seat
-                    selectedSeat.setStatus(Seat.Status.SELECTED);
-                    seatAdapter.notifyDataSetChanged();
-                    selectedSeatNumber = selectedSeat.getNumber();
-                } else if (selectedSeat.getStatus() == Seat.Status.SELECTED) {
-                    // Deselect the clicked seat
-                    selectedSeat.setStatus(Seat.Status.AVAILABLE);
-                    seatAdapter.notifyDataSetChanged();
-                    selectedSeatNumber = "";
-                } else {
-                    Toast.makeText(SeatSelectionActivity.this, "Seat is already reserved", Toast.LENGTH_SHORT).show();
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            Seat selectedSeat = seatsList.get(position);
+
+            // Check reservation status directly from Firebase
+            DatabaseReference seatRef = FirebaseDatabase.getInstance().getReference().child("seats").child(selectedSeat.getNumber());
+            seatsRef.child(selectedSeat.getNumber()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Boolean isReservedForFull = dataSnapshot.child("reserveStatusList").child("FULL_DAY").getValue(Boolean.class);
+                        Boolean isReservedForMor = dataSnapshot.child("reserveStatusList").child("MORNING").getValue(Boolean.class);
+                        Boolean isReservedForEve = dataSnapshot.child("reserveStatusList").child("EVENING").getValue(Boolean.class);
+
+                        if ((isReservedForMor != null && isReservedForMor) || (isReservedForEve != null && isReservedForEve)) {
+                            radioGroupSlots.findViewById(R.id.radioFullDay).setVisibility(View.GONE);
+                        } else {
+                            radioGroupSlots.findViewById(R.id.radioFullDay).setVisibility(View.VISIBLE);
+                        }
+
+                        if ((isReservedForFull != null && isReservedForFull) || (isReservedForMor && isReservedForEve)) {
+                            // Display toast and make the button disappear
+                            Toast.makeText(SeatSelectionActivity.this, "Please select a different seat, it is completely reserved", Toast.LENGTH_LONG).show();
+                            btnConfirm.setClickable(false);
+                        } else if ((isReservedForMor && isReservedForEve)) {
+                            Toast.makeText(SeatSelectionActivity.this, "Please select a different seat, it is completely reserved", Toast.LENGTH_LONG).show();
+                            btnConfirm.setClickable(false);
+                        } else {
+                            btnConfirm.setClickable(true);
+                            // Check if selected slot matches the reserve status list slot
+                            int selectedSlotId = radioGroupSlots.getCheckedRadioButtonId();
+                            boolean slotMatches = false;
+                            if (selectedSlotId != -1) {
+                                String selectedSlotText = ((RadioButton) findViewById(selectedSlotId)).getText().toString();
+                                switch (selectedSlotText) {
+                                    case "Morning":
+                                        slotMatches = isReservedForMor;
+                                        break;
+                                    case "Evening":
+                                        slotMatches = isReservedForEve;
+                                        break;
+                                    case "Full Day":
+                                        slotMatches = isReservedForFull;
+                                        break;
+                                }
+                            }
+
+                            if (slotMatches) {
+                                Toast.makeText(SeatSelectionActivity.this, "Please select a different slot", Toast.LENGTH_LONG).show();
+                            } else {
+                                // Seat is not reserved completely and slot matches, proceed with selection
+                                if (selectedSeat.getStatus() == Seat.Status.AVAILABLE) {
+                                    deselectAllSeats();
+                                    selectedSeat.setStatus(Seat.Status.SELECTED);
+                                    seatAdapter.notifyDataSetChanged();
+                                    selectedSeatNumber = selectedSeat.getNumber();
+                                } else if (selectedSeat.getStatus() == Seat.Status.SELECTED) {
+                                    selectedSeat.setStatus(Seat.Status.AVAILABLE);
+                                    seatAdapter.notifyDataSetChanged();
+                                    selectedSeatNumber = "";
+                                }
+                            }
+                        }
+
+                    }
                 }
-            }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                }
+            });
         });
 
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
+        btnConfirm.setOnClickListener(v -> {
+
+            if (currentUser != null) {
+                checkUserSubscription();
+            } else {
+                Toast.makeText(SeatSelectionActivity.this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ImageView imageView = findViewById(R.id.imageButton);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!selectedSlot.isEmpty() && isSeatSelected()) {
-                    Intent intent = new Intent(getApplicationContext(), paymentActivity.class);
-                    intent.putExtra("selectedSeatNumber", selectedSeatNumber);
-                    intent.putExtra("selectedSlot", selectedSlot);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(SeatSelectionActivity.this, "Please select both slot and seat", Toast.LENGTH_SHORT).show();
-                }
+                // Create the dialog builder
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(SeatSelectionActivity.this);
+
+                // Create an ImageView to display the image
+                ImageView imageView = new ImageView(SeatSelectionActivity.this);
+                imageView.setImageResource(R.drawable.color_info); // Replace 'color_info' with your image resource
+
+                // Get the drawable from the image view
+                Drawable drawable = imageView.getDrawable();
+
+                // Set the image drawable to the image view
+                imageView.setImageDrawable(drawable);
+
+                // Set the image view to the dialog builder
+                dialogBuilder.setView(imageView);
+
+                // Set the positive button for the dialog
+                dialogBuilder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+                // Create the dialog
+                AlertDialog dialog = dialogBuilder.create();
+
+                // Retrieve the intrinsic width and height of the drawable
+                int width = drawable.getIntrinsicWidth();
+                int height = drawable.getIntrinsicHeight();
+
+                // Set the layout parameters for the dialog window to match the image dimensions
+                dialog.getWindow().setLayout(width, height);
+
+                // Show the dialog
+                dialog.show();
             }
         });
+
+
+
     }
+
+
+
+    private void checkUserSubscription() {
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Boolean isSubscribed = dataSnapshot.child("isSubscribed").getValue(Boolean.class);
+                        if (isSubscribed != null && isSubscribed) {
+                            // User is already subscribed
+                            Toast.makeText(SeatSelectionActivity.this, "You are already subscribed", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // User is not subscribed, proceed with booking
+                            if (!selectedSlot.isEmpty() && isSeatSelected()) {
+                                Intent intent = new Intent(getApplicationContext(), paymentActivity.class);
+                                intent.putExtra("selectedSeatNumber", selectedSeatNumber);
+                                intent.putExtra("selectedSlot", selectedSlot);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(SeatSelectionActivity.this, "Please select both slot and seat", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                }
+            });
+        }
+    }
+
 
     private void updateSeatAvailability() {
         for (Seat seat : seatsList) {
             seat.setStatus(Seat.Status.AVAILABLE);
         }
 
-        Query query = seatsRef.orderByChild("reserveStatus/" + selectedSlot).equalTo(true);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query morningEveningQuery = seatsRef.orderByChild("reserveStatus/" + selectedSlot).equalTo(true);
+        morningEveningQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
@@ -120,10 +257,40 @@ public class SeatSelectionActivity extends AppCompatActivity {
                         Seat existingSeat = findSeatByNumber(seat.getNumber());
                         if (existingSeat != null) {
                             existingSeat.setStatus(Seat.Status.RESERVED);
+                            existingSeat.addReserveStatus(getReserveStatus(selectedSlot));
                         }
                     }
                 }
                 seatAdapter.notifyDataSetChanged();
+
+                Query fullDayQuery = seatsRef.orderByChild("reserveStatus/" + Seat.ReserveStatus.FULL_DAY).equalTo(true);
+                fullDayQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
+                            Seat seat = seatSnapshot.getValue(Seat.class);
+                            if (seat != null) {
+                                Seat existingSeat = findSeatByNumber(seat.getNumber());
+                                if (existingSeat != null) {
+                                    if (!existingSeat.hasReserveStatus(Seat.ReserveStatus.MORNING) &&
+                                            !existingSeat.hasReserveStatus(Seat.ReserveStatus.EVENING)) {
+                                        existingSeat.setStatus(Seat.Status.RESERVED);
+                                        existingSeat.addReserveStatus(Seat.ReserveStatus.FULL_DAY);
+                                    }
+                                }
+                            }
+                        }
+                        seatAdapter.notifyDataSetChanged();
+                        // Check if any seat is reserved for full day, if yes, disable the button
+                        boolean isAnySeatReservedForFullDay = isAnySeatReservedForFullDay();
+                        btnConfirm.setEnabled(!isAnySeatReservedForFullDay);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle errors
+                    }
+                });
             }
 
             @Override
@@ -133,11 +300,15 @@ public class SeatSelectionActivity extends AppCompatActivity {
         });
     }
 
-    private void updateSeatStatus(Seat seat) {
-        seat.setStatus(Seat.Status.SELECTED);
-        seatsRef.child(seat.getNumber()).setValue(seat);
-        seatAdapter.notifyDataSetChanged();
+    private boolean isAnySeatReservedForFullDay() {
+        for (Seat seat : seatsList) {
+            if (seat.hasReserveStatus(Seat.ReserveStatus.FULL_DAY)) {
+                return true;
+            }
+        }
+        return false;
     }
+
 
     private boolean isSeatSelected() {
         for (Seat seat : seatsList) {
@@ -177,24 +348,5 @@ public class SeatSelectionActivity extends AppCompatActivity {
         }
     }
 
-    private void updateSeatReservationStatus(Seat seat) {
-        DatabaseReference seatsRef = FirebaseDatabase.getInstance().getReference().child("seats");
-        // Find the seat in Firebase based on its number
-        Query query = seatsRef.orderByChild("number").equalTo(seat.getNumber());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
-                    // Update the seat with the new data
-                    seatSnapshot.getRef().setValue(seat);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle any errors
-            }
-        });
-    }
 
 }

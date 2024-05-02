@@ -1,14 +1,13 @@
 package com.example.LibraryBee;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Seat {
     private String number;
     private Status status;
+    private long reservationTimestamp; // Timestamp for reservation
     private List<ReserveStatus> reserveStatusList; // List to hold reserve statuses
-
 
     public enum Status {
         AVAILABLE,
@@ -22,14 +21,12 @@ public class Seat {
         FULL_DAY
     }
 
-    public Seat(String number, String status) {
-        // Initialize default values if needed
-    }
-
-    public Seat(String number, Status status) {
+    // Updated constructor to include reservation timestamp
+    public Seat(String number, Status status, long reservationTimestamp) {
         this.number = number;
         this.status = status;
-        this.reserveStatusList = new ArrayList<>(); // Initialize the list
+        this.reservationTimestamp = reservationTimestamp;
+        this.reserveStatusList = new ArrayList<>(2); // Initialize the list
     }
 
     public String getNumber() {
@@ -48,6 +45,14 @@ public class Seat {
         this.status = status;
     }
 
+    public long getReservationTimestamp() {
+        return reservationTimestamp;
+    }
+
+    public void setReservationTimestamp(long reservationTimestamp) {
+        this.reservationTimestamp = reservationTimestamp;
+    }
+
     public List<ReserveStatus> getReserveStatusList() {
         return reserveStatusList;
     }
@@ -61,5 +66,14 @@ public class Seat {
         this.reserveStatusList = reserveStatusList;
     }
 
+    public boolean hasReserveStatus(ReserveStatus status) {
+        return reserveStatusList != null && reserveStatusList.contains(status);
+    }
 
+    public void addReserveStatus(ReserveStatus status) {
+        if (reserveStatusList == null) {
+            reserveStatusList = new ArrayList<>();
+        }
+        reserveStatusList.add(status);
+    }
 }

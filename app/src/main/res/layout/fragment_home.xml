@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C2185B"
+    android:background="@color/white"
     tools:context=".home">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,25 +123,38 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btn5"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_row="2"
-                android:layout_column="0"
-                android:layout_margin="5dp"
-                android:background="@drawable/custom_btn"
-                android:contentDescription="btn"
-                android:text="book\nRecomend"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+            />
             />
 
         </GridLayout>
 
 
+
+        <Button
+            android:id="@+id/btn5"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_row="2"
+            android:layout_column="1"
+            android:layout_margin="5dp"
+            android:layout_marginTop="141dp"
+            android:background="@drawable/custom_btn"
+            android:contentDescription="btn"
+            android:text="book\nRecomend"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gridLayout"
+            app:layout_constraintVertical_bias="0.0" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
@@ -146,4 +164,7 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_drawer" />
 
+
 </androidx.drawerlayout.widget.DrawerLayout>
+
+

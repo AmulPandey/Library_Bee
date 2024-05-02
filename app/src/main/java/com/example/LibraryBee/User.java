@@ -1,7 +1,13 @@
 package com.example.LibraryBee;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class User {
     public String userId;
+
     public String email;
     public String username;
     public String phoneNumber;
@@ -29,11 +35,12 @@ public class User {
         this.subscriptionTimestamp = 0; // Initialize to 0 by default
         this.timingSlot = ""; // Initialize to empty string by default
         this.seatNumber = ""; // Initialize to empty string by default
-        this.joiningDate = ""; // Initialize to empty string by default
+        this.joiningDate = getCurrentDate(); // Initialize to empty string by default
         this.leavingDate = ""; // Initialize to empty string by default
     }
 
     public long getSubscriptionTimestamp() {
+
         return subscriptionTimestamp;
     }
 
@@ -96,4 +103,21 @@ public class User {
     public void setLeavingDate(String leavingDate) {
         this.leavingDate = leavingDate;
     }
+
+    private String getCurrentDate() {
+        // Get current date in day/month/year format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date currentDate = new Date();
+        return dateFormat.format(currentDate);
+    }
+
+    public String getSubscriptionDateAsString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date date = new Date(subscriptionTimestamp);
+        if(subscriptionTimestamp != 0)
+         return dateFormat.format(date);
+        return "0";
+    }
+
+
 }
