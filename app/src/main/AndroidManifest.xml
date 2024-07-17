@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,11 +18,9 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.example.LibraryBee.permission.C2D_MESSAGE" />
 
-
     <permission
         android:name="com.example.LibraryBee.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
 
     <application
         android:allowBackup="true"
@@ -35,19 +33,22 @@
         android:theme="@style/Theme.Design.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".RequestHandeling"
+            android:name=".User_Pannel.FullScreenImageActivity"
             android:exported="false" />
         <activity
-            android:name=".SeatManagementActivity"
+            android:name=".Admin_Pannel.RequestHandeling"
             android:exported="false" />
         <activity
-            android:name=".SeatSelectionActivity"
-            android:exported="false"></activity>
-        <activity
-            android:name=".UserListActivity"
+            android:name=".Admin_Pannel.SeatManagementActivity"
             android:exported="false" />
         <activity
-            android:name=".AdminDashboardActivity"
+            android:name=".User_Pannel.SeatSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Admin_Pannel.UserListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Admin_Pannel.AdminDashboardActivity"
             android:exported="false" />
 
         <service
@@ -69,13 +70,13 @@
         </service>
 
         <activity
-            android:name=".paymentActivity"
+            android:name=".User_Pannel.paymentActivity"
             android:exported="false" />
         <activity
-            android:name=".Signup"
+            android:name=".Auth.Signup"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".Auth.Login"
             android:exported="false" />
         <activity
             android:name=".Splash"

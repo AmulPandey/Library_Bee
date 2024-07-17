@@ -1,4 +1,4 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.LibraryBee.Login;
-import com.example.LibraryBee.User;
+
+import com.example.LibraryBee.MainActivity;
+import com.example.LibraryBee.R;
+import com.example.LibraryBee.Admin_Pannel.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,9 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class Signup extends AppCompatActivity {
 

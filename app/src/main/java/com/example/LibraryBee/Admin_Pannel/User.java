@@ -1,6 +1,5 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Admin_Pannel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -12,19 +11,18 @@ public class User {
     public String username;
     public String phoneNumber;
     public String gender;
-    public boolean isSubscribed; // Make this public
+    public boolean isSubscribed;
     public long subscriptionTimestamp;
-    public String timingSlot; // New element for timing slot
-    public String seatNumber; // New element for seat number
-    public String joiningDate; // New element for joining date
-    public String leavingDate; // New element for leaving date
+    public String timingSlot;
+    public String seatNumber;
+    public String joiningDate;
 
 
-    // Add a default constructor
+    // Default constructor
     public User() {
     }
 
-    // Your existing constructor
+    // Constructor with parameters
     public User(String userId, String email, String username, String phoneNumber, String gender, boolean isSubscribed) {
         this.userId = userId;
         this.email = email;
@@ -32,15 +30,13 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.isSubscribed = isSubscribed;
-        this.subscriptionTimestamp = 0; // Initialize to 0 by default
-        this.timingSlot = ""; // Initialize to empty string by default
-        this.seatNumber = ""; // Initialize to empty string by default
-        this.joiningDate = getCurrentDate(); // Initialize to empty string by default
-        this.leavingDate = ""; // Initialize to empty string by default
+        this.subscriptionTimestamp = 0;
+        this.timingSlot = "";
+        this.seatNumber = "";
+        this.joiningDate = getCurrentDate();
     }
 
     public long getSubscriptionTimestamp() {
-
         return subscriptionTimestamp;
     }
 
@@ -96,16 +92,8 @@ public class User {
         this.joiningDate = joiningDate;
     }
 
-    public String getLeavingDate() {
-        return leavingDate;
-    }
-
-    public void setLeavingDate(String leavingDate) {
-        this.leavingDate = leavingDate;
-    }
 
     private String getCurrentDate() {
-        // Get current date in day/month/year format
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date currentDate = new Date();
         return dateFormat.format(currentDate);
@@ -114,10 +102,6 @@ public class User {
     public String getSubscriptionDateAsString() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date(subscriptionTimestamp);
-        if(subscriptionTimestamp != 0)
-         return dateFormat.format(date);
-        return "0";
+        return subscriptionTimestamp != 0 ? dateFormat.format(date) : "0";
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Admin_Pannel;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.LibraryBee.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -79,12 +80,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         // Set additional details if needed
         holder.textViewPhoneNumber.setText("Phone Number: " + user.getPhoneNumber());
         holder.textViewGender.setText("Gender: " + user.getGender());
-        holder.textViewSubscription.setText("Subscribed: " + (user.isSubscribed() ? "Yes" : "No"));
+        holder.textViewSubscription.setText("isSubscribed: " + (user.isSubscribed() ? "Yes" : "No"));
         holder.textViewEmail.setText("email:"+user.getEmail());
         holder.textViewseatNumber.setText("Seat No:"+user.getSeatNumber());
         holder.textViewtimingSlot.setText("Slot:"+user.getTimingSlot());
         holder.textViewjoiningDate.setText("Joined In:"+user.getJoiningDate());
-        holder.textViewleavingDate.setText("Left In:"+user.getLeavingDate());
+       // holder.textViewleavingDate.setText("Left In:"+user.getLeavingDate());
         holder.textViewSubsdate.setText("Last Subscription: " + user.getSubscriptionDateAsString());
 
     }

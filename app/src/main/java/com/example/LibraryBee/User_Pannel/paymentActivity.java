@@ -1,9 +1,8 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.User_Pannel;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -11,12 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.LibraryBee.Admin_Pannel.Request;
+import com.example.LibraryBee.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
-import java.util.ArrayList;
+
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +42,7 @@ public class paymentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payment);
+        setContentView(com.example.LibraryBee.R.layout.activity_payment);
         initializeViews();
 
         // Get the selected seat number from the intent
@@ -235,8 +236,8 @@ public class paymentActivity extends AppCompatActivity {
         // Create a ScheduledThreadPoolExecutor with a single thread
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
-        // Delay setting isSubscribed to false after one minute
-        long delayInMilliseconds = 12L * 60 * 60 * 1000;
+
+        long delayInMilliseconds = 30*24*60*60*1000;
         executor.schedule(() -> {
             // Retrieve the reservation timestamp from Firebase
             seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {

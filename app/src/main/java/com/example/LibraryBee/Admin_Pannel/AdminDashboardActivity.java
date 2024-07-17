@@ -1,8 +1,6 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Admin_Pannel;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
-import static java.security.AccessController.getContext;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -13,19 +11,13 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.media.RingtoneManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.app.NotificationCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -36,24 +28,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
+import com.example.LibraryBee.Auth.Login;
+import com.example.LibraryBee.User_Pannel.Message;
+import com.example.LibraryBee.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.functions.FirebaseFunctions;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.functions.HttpsCallableResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -66,7 +53,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private Button seat;
 
-    private  Button button5;
+    private  Button button4;
 
     private Uri mImageUri;
 
@@ -90,13 +77,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         userListButton = findViewById(R.id.userlistbutton);
         seat = findViewById(R.id.button2);
-        button5 = findViewById(R.id.button5);
+        button4 = findViewById(R.id.button4);
 
         userListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start the UserListActivity
-                Intent intent = new Intent(AdminDashboardActivity.this,UserListActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this, UserListActivity.class);
                 startActivity(intent);
             }
         });
@@ -105,7 +92,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Start the UserListActivity
-                Intent intent = new Intent(AdminDashboardActivity.this ,SeatManagementActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this , SeatManagementActivity.class);
                 startActivity(intent);
             }
         });
@@ -120,10 +107,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
             }
         });
 
-        button5.setOnClickListener(new View.OnClickListener() {
+        button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminDashboardActivity.this ,RequestHandeling.class);
+                Intent intent = new Intent(AdminDashboardActivity.this , RequestHandeling.class);
                 startActivity(intent);
 
             }
@@ -203,6 +190,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -215,8 +203,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
                     // Dismiss the dialog
                     dialog.dismiss();
                 })
+                .setOnDismissListener(dialog -> {
+                    // Handle dialog dismiss
+                    // This method is called when the dialog is dismissed
+                })
                 .show();
     }
+
+
 
 
     private void showLogoutDialog() {
@@ -239,7 +233,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         builder.create().show();
     }
-
 
 
 

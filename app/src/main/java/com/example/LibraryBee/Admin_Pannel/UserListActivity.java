@@ -1,9 +1,7 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Admin_Pannel;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,12 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.LibraryBee.R;
 import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +26,11 @@ public class UserListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_list);
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewUsers);
+        setContentView(com.example.LibraryBee.R.layout.activity_user_list);
+        RecyclerView recyclerView = findViewById(com.example.LibraryBee.R.id.recyclerViewUsers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        progressBar = findViewById(R.id.progressBar);
-        SearchView searchView = findViewById(R.id.searchView);
+        progressBar = findViewById(com.example.LibraryBee.R.id.progressBar);
+        SearchView searchView = findViewById(com.example.LibraryBee.R.id.searchView);
         textViewUserCount = findViewById(R.id.textViewUserCount);
         userList = new ArrayList<>();
 

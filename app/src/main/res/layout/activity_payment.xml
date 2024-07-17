@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FBC02D"
-    tools:context=".paymentActivity">
+    tools:context=".User_Pannel.paymentActivity">
 
   <ImageView
       android:id="@+id/thousand"

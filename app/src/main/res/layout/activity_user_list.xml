@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:background="@android:color/white"
-    tools:context=".UserListActivity">
+    tools:context=".Admin_Pannel.UserListActivity">
 
     <!-- activity_user_list.xml -->
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="#000000"
+        android:background="#2A090909"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         />

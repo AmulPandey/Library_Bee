@@ -1,4 +1,4 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -8,12 +8,17 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.LibraryBee.Admin_Pannel.AdminDashboardActivity;
+import com.example.LibraryBee.MainActivity;
+import com.example.LibraryBee.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,10 +35,8 @@ public class Login extends AppCompatActivity {
     private Button loginAdminButton;
     private FirebaseAuth auth;
 
-    private ProgressDialog loginProgressDialog;
-    private ProgressDialog loginAdminProgressDialog;
-
     private TextView forgotPasswordTextView;
+    private LinearLayout loginLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +47,6 @@ public class Login extends AppCompatActivity {
         checkCurrentUser();
         setListeners();
 
-        loginProgressDialog = new ProgressDialog(this);
-        loginProgressDialog.setMessage("Logging in...");
-        loginProgressDialog.setCancelable(false);
-
-        loginAdminProgressDialog = new ProgressDialog(this);
-        loginAdminProgressDialog.setMessage("Logging in as admin...");
-        loginAdminProgressDialog.setCancelable(false);
-
     }
 
     private void initializeViews() {
@@ -61,6 +56,7 @@ public class Login extends AppCompatActivity {
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
         signUpTextView = findViewById(R.id.signUpTextView);
         loginAdminButton = findViewById(R.id.loginAdminButton);
+        loginLayout = findViewById(R.id.loginLayout);
 
     }
 
@@ -96,10 +92,11 @@ public class Login extends AppCompatActivity {
             showToast("Please enter email and password");
             return;
         }
-        // Show progress bar before signing in
 
-        loginButton.setVisibility(View.GONE);
-        loginProgressDialog.show();
+        loginLayout.setVisibility(View.GONE);
+        // Show overlay with Lottie animation
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.VISIBLE);
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -108,14 +105,14 @@ public class Login extends AppCompatActivity {
                         checkAdminStatus();
                     } else {
                         showToast("Authentication failed. " + task.getException().getMessage());
-                        loginButton.setVisibility(View.VISIBLE);
+                        overlay.setVisibility(View.GONE);
+                        loginLayout.setVisibility(View.VISIBLE);
+
                     }
-
-                    loginProgressDialog.dismiss();
-
                 });
-
     }
+
+
 
     private void checkAdminStatus() {
         String adminEmail = "admin@gmail.com";
@@ -126,7 +123,6 @@ public class Login extends AppCompatActivity {
         if (email.equals(adminEmail) && password.equals(adminPassword)) {
             saveUserType("Admin");
             navigateToDashboard("Admin");
-            loginButton.setVisibility(View.VISIBLE);
             finish();
         } else {
             DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("admins")
@@ -137,7 +133,6 @@ public class Login extends AppCompatActivity {
                     String userType = snapshot.exists() ? "Admin" : "User";
                     saveUserType(userType);
                     navigateToDashboard(userType);
-                    loginButton.setVisibility(View.VISIBLE);
                     finish();
                 }
 
@@ -151,9 +146,6 @@ public class Login extends AppCompatActivity {
 
     private void loginAsAdmin() {
 
-        loginAdminButton.setVisibility(View.GONE);
-        loginAdminProgressDialog.show();
-
         String adminEmail = "admin@gmail.com";
         String adminPassword = "654321";
         String email = emailEditText.getText().toString().trim();
@@ -161,22 +153,16 @@ public class Login extends AppCompatActivity {
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             showToast("Please enter email and password");
-            loginAdminProgressDialog.dismiss();
-            loginAdminButton.setVisibility(View.VISIBLE);
             return;
         }
 
         if (!email.equals(adminEmail) || !password.equals(adminPassword)) {
             showToast("Invalid admin credentials");
-            loginAdminProgressDialog.dismiss();
-            loginAdminButton.setVisibility(View.VISIBLE);
             return;
         }
 
-        loginAdminProgressDialog.dismiss();
         saveUserType("Admin");
         navigateToDashboard("Admin");
-        loginAdminButton.setVisibility(View.VISIBLE);
         finish();
 
     }

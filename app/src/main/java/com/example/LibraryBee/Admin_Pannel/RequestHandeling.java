@@ -1,4 +1,4 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.Admin_Pannel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +13,8 @@ import android.widget.ListView;
 import android.app.AlertDialog;
 import android.widget.TextView;
 
+import com.example.LibraryBee.R;
+import com.example.LibraryBee.User_Pannel.Seat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -264,14 +265,15 @@ public class RequestHandeling extends AppCompatActivity {
                 break;
         }
 
+
         long reservationTimestamp = System.currentTimeMillis();
         seatToUpdateRef.child("reservationTimestamp").setValue(reservationTimestamp);
 
         // Create a ScheduledThreadPoolExecutor with a single thread
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
-        // Delay setting isSubscribed to false after one minute
-        long delayInMilliseconds = 30L * 24 * 60 * 60 * 1000;
+        // Delay setting isSubscribed to false after 30 days
+        long delayInMilliseconds =30*24*60*60*1000;
         executor.schedule(() -> {
             // Retrieve the reservation timestamp from Firebase
             seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -280,7 +282,7 @@ public class RequestHandeling extends AppCompatActivity {
                     if (dataSnapshot.exists()) {
                         Long reservedAt = dataSnapshot.getValue(Long.class);
                         if (reservedAt != null && System.currentTimeMillis() - reservedAt >= delayInMilliseconds) {
-                            // More than 1 minute has passed since reservation, revert changes
+                            // More than 12 hours have passed since reservation, revert changes
                             userRef.setValue(false);
                             seatToUpdateRef.child("status").setValue("AVAILABLE");
                             reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
@@ -290,6 +292,8 @@ public class RequestHandeling extends AppCompatActivity {
                             usertimingSlotRef.setValue("none");
                             TimestampRef.setValue(0);
 
+                            DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("requests");
+                            requestsRef.child(userId).child("rejected").setValue(true);
                             // Also remove the reservation timestamp
                             seatToUpdateRef.child("reservationTimestamp").removeValue();
                         }
@@ -302,6 +306,7 @@ public class RequestHandeling extends AppCompatActivity {
                 }
             });
         }, delayInMilliseconds, TimeUnit.MILLISECONDS);
+
 
     }
 
@@ -367,11 +372,9 @@ public class RequestHandeling extends AppCompatActivity {
         reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
         userseatNumberRef.setValue("none");
         usertimingSlotRef.setValue("none");
-        TimestampRef.setValue(0);
 
         // Also remove the reservation timestamp
         seatToUpdateRef.child("reservationTimestamp").removeValue();
-
 
     }
 
