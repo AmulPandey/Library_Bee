@@ -2,7 +2,7 @@ package com.example.LibraryBee.Admin_Pannel;
 
 public class Request {
     private String userId;
-    private String userName;
+    private String username;
     private String userEmail;
     private String selectedSeatNumber;
     private String selectedSlot;
@@ -16,9 +16,9 @@ public class Request {
         // Default constructor required for Firebase
     }
 
-    public Request(String userId, String userName, String userEmail, String selectedSeatNumber, String selectedSlot, String amount) {
+    public Request(String userId, String username, String userEmail, String selectedSeatNumber, String selectedSlot, String amount) {
         this.userId = userId;
-        this.userName = userName;
+        this.username = username;
         this.userEmail = userEmail;
         this.selectedSeatNumber = selectedSeatNumber;
         this.selectedSlot = selectedSlot;
@@ -35,11 +35,11 @@ public class Request {
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.username = userName;
     }
 
     public String getUserEmail() {

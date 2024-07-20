@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
@@ -77,6 +79,14 @@ public class MainActivity extends AppCompatActivity {
                         reserveStatusRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false); // Assuming initially false
                         reserveStatusRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
                         reserveStatusRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
+
+                        // Initialize user IDs and usernames lists
+                        DatabaseReference userIdsRef = newSeatRef.child("userIds");
+                        userIdsRef.setValue(new ArrayList<String>()); // Initialize user IDs list
+
+                        DatabaseReference usernamessRef = newSeatRef.child("usernames");
+                        usernamessRef.setValue(new ArrayList<String>()); // Initialize usernames list
+
                     }
                 }
             }

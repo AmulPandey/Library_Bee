@@ -31,8 +31,8 @@ public class User {
         this.gender = gender;
         this.isSubscribed = isSubscribed;
         this.subscriptionTimestamp = 0;
-        this.timingSlot = "";
-        this.seatNumber = "";
+        this.timingSlot = "none";
+        this.seatNumber = "none";
         this.joiningDate = getCurrentDate();
     }
 

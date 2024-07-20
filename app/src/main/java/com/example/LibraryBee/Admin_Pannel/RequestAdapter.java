@@ -9,47 +9,69 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.LibraryBee.Admin_Pannel.Request;
 import com.example.LibraryBee.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-public class RequestAdapter extends ArrayAdapter<Request> {
+public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
 
+    private List<Request> requests;
     private Context context;
-    private List<Request> requestList;
 
-    public RequestAdapter(Context context, List<Request> requestList) {
-        super(context, 0, requestList);
+    public RequestAdapter(List<Request> requests, Context context) {
+        this.requests = requests;
         this.context = context;
-        this.requestList = requestList;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(context).inflate(R.layout.request_item, parent, false);
+    public RequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.request_item, parent, false);
+        return new RequestViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
+        Request request = requests.get(position);
+        holder.bind(request);
+    }
+
+    @Override
+    public int getItemCount() {
+        return requests.size();
+    }
+
+    public class RequestViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView userNameTextView;
+        private TextView userIdTextView;
+        private TextView seatNumberTextView;
+        private TextView slotTextView;
+        private TextView amountTextView;
+
+        public RequestViewHolder(@NonNull View itemView) {
+            super(itemView);
+            userNameTextView = itemView.findViewById(R.id.user_name);
+            userIdTextView = itemView.findViewById(R.id.user_id);
+            seatNumberTextView = itemView.findViewById(R.id.seat_number);
+            slotTextView = itemView.findViewById(R.id.slot);
+            amountTextView = itemView.findViewById(R.id.amount);
         }
 
-        Request request = requestList.get(position);
-
-        TextView userNameTextView = listItemView.findViewById(R.id.user_name);
-        TextView userIdTextView = listItemView.findViewById(R.id.user_id);
-        TextView seatNumberTextView = listItemView.findViewById(R.id.seat_number);
-        TextView slotTextView = listItemView.findViewById(R.id.slot);
-        TextView amountTextView = listItemView.findViewById(R.id.amount);
-
-        // Set username and userID
-        String userNameWithId = request.getUserName() + " (ID: " + request.getUserId() + ")";
-        userNameTextView.setText(userNameWithId);
-
-        seatNumberTextView.setText("Seat: " + request.getSelectedSeatNumber());
-        slotTextView.setText("Slot: " + request.getSelectedSlot());
-        amountTextView.setText("Amount: " + request.getAmount());
-
-        return listItemView;
+        public void bind(Request request) {
+            userNameTextView.setText("Username: " + request.getUserName());
+            userIdTextView.setText("UserId: " + request.getUserId());
+            seatNumberTextView.setText("Seat: " + request.getSelectedSeatNumber());
+            slotTextView.setText("Slot: " + request.getSelectedSlot());
+            amountTextView.setText("Amount: " + request.getAmount());
+        }
     }
 }

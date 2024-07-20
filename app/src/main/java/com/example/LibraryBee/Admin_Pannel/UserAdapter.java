@@ -15,8 +15,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.LibraryBee.R;
+import com.example.LibraryBee.User_Pannel.Seat;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +66,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     holder.textViewseatNumber.setVisibility(View.VISIBLE);
                     holder.textViewtimingSlot.setVisibility(View.VISIBLE);
                     holder.textViewjoiningDate.setVisibility(View.VISIBLE);
-                    holder.textViewleavingDate.setVisibility(View.VISIBLE);
                     holder.textViewSubsdate.setVisibility(View.VISIBLE);
 
                 } else {
@@ -71,7 +76,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     holder.textViewseatNumber.setVisibility(View.GONE);
                     holder.textViewtimingSlot.setVisibility(View.GONE);
                     holder.textViewjoiningDate.setVisibility(View.GONE);
-                    holder.textViewleavingDate.setVisibility(View.GONE);
                     holder.textViewSubsdate.setVisibility(View.GONE);
                 }
             }
@@ -80,12 +84,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         // Set additional details if needed
         holder.textViewPhoneNumber.setText("Phone Number: " + user.getPhoneNumber());
         holder.textViewGender.setText("Gender: " + user.getGender());
-        holder.textViewSubscription.setText("isSubscribed: " + (user.isSubscribed() ? "Yes" : "No"));
+        holder.textViewSubscription.setText("Subscribed: " + (user.isSubscribed() ? "Yes" : "No"));
         holder.textViewEmail.setText("email:"+user.getEmail());
         holder.textViewseatNumber.setText("Seat No:"+user.getSeatNumber());
         holder.textViewtimingSlot.setText("Slot:"+user.getTimingSlot());
         holder.textViewjoiningDate.setText("Joined In:"+user.getJoiningDate());
-       // holder.textViewleavingDate.setText("Left In:"+user.getLeavingDate());
         holder.textViewSubsdate.setText("Last Subscription: " + user.getSubscriptionDateAsString());
 
     }
@@ -98,7 +101,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewUsername, textViewEmail, textViewPhoneNumber, textViewGender,
                 textViewSubscription, textViewUserid, textViewseatNumber, textViewtimingSlot,
-                textViewjoiningDate, textViewleavingDate,textViewSubsdate;
+                textViewjoiningDate,textViewSubsdate;
         ImageView btnViewMoreInfo;
         ImageView imgcontact;
         View additionalDetailsLayout;
@@ -114,7 +117,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             textViewseatNumber = itemView.findViewById(R.id.textViewseatNumber);
             textViewtimingSlot = itemView.findViewById(R.id.textViewtimingSlot);
             textViewjoiningDate = itemView.findViewById(R.id.textViewjoiningDate);
-            textViewleavingDate = itemView.findViewById(R.id.textViewleavingDate);
             btnViewMoreInfo = itemView.findViewById(R.id.btnViewMoreInfo);
             additionalDetailsLayout = itemView.findViewById(R.id.additionalDetailsLayout);
             textViewSubsdate = itemView.findViewById(R.id.textViewSubsdate);
@@ -129,7 +131,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 textViewseatNumber = additionalDetailsLayout.findViewById(R.id.textViewseatNumber);
                 textViewtimingSlot = additionalDetailsLayout.findViewById(R.id.textViewtimingSlot);
                 textViewjoiningDate = additionalDetailsLayout.findViewById(R.id.textViewjoiningDate);
-                textViewleavingDate = additionalDetailsLayout.findViewById(R.id.textViewleavingDate);
                 textViewSubsdate = additionalDetailsLayout.findViewById(R.id.textViewSubsdate);
             }
 
@@ -192,22 +193,61 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Remove the user from Firebase
+                // Reference to the user's database node
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUserId());
-                userRef.removeValue();
+                DatabaseReference userseatNumberRef = userRef.child("seatNumber");
+                DatabaseReference usertimingSlotRef = userRef.child("timingSlot");
+                // Fetch the user's seat number and slot before deleting the user
+                userRef.child("seatNumber").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String seatNumber = dataSnapshot.getValue(String.class);
+                        if (seatNumber != null) {
+                            // Update the seat status in Firebase
+                            DatabaseReference seatRef = FirebaseDatabase.getInstance().getReference("seats").child(seatNumber);
+                            seatRef.child("status").setValue("AVAILABLE");
+                            seatRef.child("reservationTimestamp").removeValue(); // Remove reservation timestamp
 
-                // Optionally, you can also remove the user from the local list and update the adapter
-                userList.remove(user);
-                removeUser(user);
-                notifyDataSetChanged();
-                Toast.makeText(context, "Please Re-Open this Page To Refresh", Toast.LENGTH_SHORT).show();
+                            // Update reserve status list
+                            DatabaseReference reserveStatusListRef = seatRef.child("reserveStatusList");
+                            reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
+                            reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
+                            reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
+                        }
+
+                        userRef.setValue(false);
+                        userseatNumberRef.setValue("none");
+                        usertimingSlotRef.setValue("none");
+
+                        // Remove the user from Firebase
+                        userRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // Optionally, you can also remove the user from the local list and update the adapter
+                                    userList.remove(user);
+                                    removeUser(user);
+                                    notifyDataSetChanged();
+                                    Toast.makeText(context, "Please Re-Open this Page To Refresh", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Failed to remove user", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle possible errors.
+                        Toast.makeText(context, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Dismiss the dialog if user chooses not to delete
                 dialog.dismiss();
             }
         });
@@ -215,6 +255,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
 
 }

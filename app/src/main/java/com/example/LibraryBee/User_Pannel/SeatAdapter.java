@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,8 @@ public class SeatAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Seat> seatsList;
+
+
 
     public SeatAdapter(Context context, ArrayList<Seat> seatsList) {
         this.context = context;
@@ -57,10 +60,14 @@ public class SeatAdapter extends BaseAdapter {
 
         TextView textViewSeatNumber = view.findViewById(R.id.textViewSeatNumber);
         TextView textViewSlot = view.findViewById(R.id.textViewSlot);
+        final ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+
+        progressBar.setVisibility(View.VISIBLE);
 
         Seat seat = seatsList.get(position);
 
         textViewSeatNumber.setText(seat.getNumber());
+
 
         DatabaseReference seatRef = FirebaseDatabase.getInstance().getReference().child("seats").child(seat.getNumber());
 
@@ -102,7 +109,7 @@ public class SeatAdapter extends BaseAdapter {
                             }
                         }
 
-                        updateUI(view, reserveStatusList);
+                        updateUI(view,reserveStatusList);
                     }
                 }
             }
@@ -110,8 +117,11 @@ public class SeatAdapter extends BaseAdapter {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle errors
+                progressBar.setVisibility(View.GONE);
             }
         });
+
+        progressBar.setVisibility(View.GONE);
 
         return view;
     }
@@ -119,6 +129,7 @@ public class SeatAdapter extends BaseAdapter {
 
     // Method to update UI based on reserve status list
     private void updateUI(View view, List<Seat.ReserveStatus> reserveStatusList) {
+
         if (reserveStatusList != null) {
             for (Seat.ReserveStatus status : reserveStatusList) {
                 switch (status) {

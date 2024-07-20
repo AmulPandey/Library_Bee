@@ -9,8 +9,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +33,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.LibraryBee.Auth.Login;
+import com.example.LibraryBee.User_Pannel.FullScreenImageActivity;
 import com.example.LibraryBee.User_Pannel.Message;
 import com.example.LibraryBee.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -55,13 +60,12 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private  Button button4;
 
-    private Uri mImageUri;
 
     private CircleImageView profileImageView;
 
-    private String imageUrl;
 
-    private ActivityResultLauncher<String> galleryLauncher;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +74,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        fetchProfileImage();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,25 +135,28 @@ public class AdminDashboardActivity extends AppCompatActivity {
         //toolbar.setBackgroundColor(getResources().getColor(R.color.black));
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setBackgroundColor(getResources().getColor(android.R.color.black));
+        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+       // Change the text color of the menu items
+        Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
+            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
+            item.setTitle(spanString);
+        }
 
         View headerView = navigationView.getHeaderView(0);
         profileImageView = headerView.findViewById(R.id.imageViewProfile);
 
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null) {
-                mImageUri = uri;
-                uploadImageToFirebaseStorage();
-            }
-        });
+        profileImageView.setImageResource(R.drawable.bee_logo);
+
+
 
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_profile_change) {
-                // Handle profile settings action
-                choosePhotoFromGallery();
-            } else if (id == R.id.nav_logout) {
+            if (id == R.id.nav_logout) {
                 // Handle logout action
                 showLogoutDialog();
             } else if (id == R.id.nav_contact_Library) {
@@ -182,7 +188,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 dialog.show();
             }else if (id == R.id.nav_logout) {
                 // Handle logout action
-                showLogoutDialog(); // Call the method to show the logout dialog
+                showLogoutDialog();
             }
 
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -297,67 +303,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    public void choosePhotoFromGallery() {
-        galleryLauncher.launch("image/*");
-    }
 
 
 
 
-    private void uploadImageToFirebaseStorage() {
-        if (mImageUri != null) {
-            ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading");
-            progressDialog.setMessage("Please wait...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-
-            final StorageReference imageReference = FirebaseStorage.getInstance().getReference("userprofiles").child(auth.getCurrentUser().getUid());
-            imageReference.putFile(mImageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        progressDialog.dismiss();
-                        // Image uploaded successfully
-                        // Now you can get the download URL and do something with it if needed
-                        imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            // Handle the download URL (e.g., save it to a database)
-                            imageUrl = uri.toString();
-                            // Update profileImageView with the uploaded image
-                            fetchProfileImage();
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        // Handle the error
-                        Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
 
 
-    private void fetchProfileImage() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            // Get the reference to the Firebase Storage path for the user's profile image
-            StorageReference imageReference = FirebaseStorage.getInstance().getReference()
-                    .child("userprofiles")
-                    .child(currentUser.getUid());
 
-            // Fetch the download URL of the image
-            imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                // Load the image into the profileImageView using Glide or Picasso
-                Glide.with(this)
-                        .load(uri)
-                        .placeholder(R.drawable.profile) // Placeholder image while loading
-                        .error(R.drawable.profile) // Image to display in case of error
-                        .into(profileImageView);
-            }).addOnFailureListener(exception -> {
-                // Handle any errors
-                Log.e(TAG, "Failed to fetch profile image: " + exception.getMessage());
-            });
-        } else {
-            Log.e(TAG, "User is not authenticated.");
-            // Handle the case where the user is not authenticated
-        }
-    }
+
+
 
 }

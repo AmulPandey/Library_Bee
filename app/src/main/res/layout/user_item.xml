@@ -18,7 +18,7 @@
             android:background="#FFFF"
             android:orientation="horizontal"
             android:id="@+id/LLrow"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <ImageView
                 android:layout_width="55dp"
@@ -26,6 +26,7 @@
                 android:id="@+id/imgcontact"
                 android:focusable="true"
                 android:clickable="true"
+                android:layout_gravity="center_vertical"
                 android:contentDescription="Contact_Image"
                 android:src="@drawable/contactpng">
 

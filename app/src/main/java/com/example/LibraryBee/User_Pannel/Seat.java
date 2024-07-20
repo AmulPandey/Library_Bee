@@ -9,6 +9,9 @@ public class Seat {
     private long reservationTimestamp; // Timestamp for reservation
     private List<ReserveStatus> reserveStatusList; // List to hold reserve statuses
 
+    private List<String> userIds; // List to hold user IDs
+    private List<String> usernames; // List to hold usernames
+
     public enum Status {
         AVAILABLE,
         SELECTED,
@@ -27,6 +30,9 @@ public class Seat {
         this.status = status;
         this.reservationTimestamp = reservationTimestamp;
         this.reserveStatusList = new ArrayList<>(2); // Initialize the list
+//        this.userIds = new ArrayList<>(2); // Initialize the list
+//        this.usernames = new ArrayList<>(2);
+
     }
 
     public String getNumber() {
@@ -57,9 +63,29 @@ public class Seat {
         return reserveStatusList;
     }
 
+    public List<String> getUserIds() {
+        return userIds;
+    }
+
+    public List<String> getUsernames() {
+        return usernames;
+    }
+
+    public void setUserId(String userId) {
+        if (userIds.size() < 2) {
+            userIds.add(userId);
+        }
+    }
+
+    public void setUserName(String username) {
+        if (usernames.size() < 2) {
+            usernames.add(username);
+        }
+    }
+
     @Override
     public String toString() {
-        return  number + ", Status: " + status;
+        return  number + ", Status: " + status + ", Usernames: " + usernames + " (" + userIds + ")";
     }
 
     public void setReserveStatusList(List<ReserveStatus> reserveStatusList) {

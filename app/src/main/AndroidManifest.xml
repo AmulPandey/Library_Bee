@@ -11,9 +11,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.example.LibraryBee.permission.C2D_MESSAGE" />
@@ -33,6 +30,12 @@
         android:theme="@style/Theme.Design.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".User_Pannel.MembershipActivity"
+            android:exported="false" />
+        <activity
+            android:name=".User_Pannel.BookRecommendActivity"
+            android:exported="false" />
+        <activity
             android:name=".User_Pannel.FullScreenImageActivity"
             android:exported="false" />
         <activity
@@ -50,25 +53,6 @@
         <activity
             android:name=".Admin_Pannel.AdminDashboardActivity"
             android:exported="false" />
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".MyJobSchedulerJob"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <activity
             android:name=".User_Pannel.paymentActivity"
             android:exported="false" />

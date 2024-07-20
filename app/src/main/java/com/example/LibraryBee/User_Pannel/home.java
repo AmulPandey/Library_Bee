@@ -9,8 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -58,15 +61,17 @@ public class home extends Fragment {
     private DatabaseReference subscriptionRef;
     private FirebaseAuth auth;
     private Button btn1; // Change the type to Button
+    private Button btn2;
     private Button btn3;
     private Button btn4;
+    private Button btn5;
     private TextView usernameTextView;
 
-    private Uri mImageUri;
+
 
     private CircleImageView profileImageView;
 
-    private String imageUrl;
+
 
 
     @Override
@@ -89,19 +94,19 @@ public class home extends Fragment {
 
 
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
-        navigationView.setBackgroundColor(getResources().getColor(android.R.color.black));
+        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+// Change the text color of the menu items
+        Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
+            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
+            item.setTitle(spanString);
+        }
 
         View headerView = navigationView.getHeaderView(0);
         profileImageView = headerView.findViewById(R.id.imageViewProfile);
-
-
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-            if (uri != null) {
-                mImageUri = uri;
-                uploadImageToFirebaseStorage();
-            }
-        });
-
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -109,11 +114,10 @@ public class home extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 // Handle navigation drawer item clicks
                 int id = item.getItemId();
-                if (id == R.id.nav_profile_change) {
-                    // Handle profile settings action
+
                     //Toast.makeText(getActivity(), "Profile Settings clicked", Toast.LENGTH_SHORT).show();
-                    choosePhotoFromGallery();
-                } else if (id == R.id.nav_contact_Library) {
+
+                if (id == R.id.nav_contact_Library) {
                     // Handle contact library action
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Contact Library")
@@ -190,21 +194,30 @@ public class home extends Fragment {
 
 
         // Correctly find the View
-        btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
+
         usernameTextView = view.findViewById(R.id.usernameTextView);
+        btn1 = view.findViewById(R.id.btn1); // Initialize btn1 once
+        btn2 = view.findViewById(R.id.btn2);
         btn3 = view.findViewById(R.id.btn3);
         btn4 = view.findViewById(R.id.btn4);
+        btn5 = view.findViewById(R.id.btn5);
         // Set click listener and start activity
 
 
         // Fetch and set the subscription status
         fetchUserData();
 
-        Button btn2 = view.findViewById(R.id.btn2);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SeatSelectionActivity.class);
+                Intent intent = new Intent(getActivity(), MembershipActivity.class);
+                startActivity(intent);
+            }
+        });
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), BookRecommendActivity.class);
                 startActivity(intent);
             }
         });
@@ -306,41 +319,10 @@ public class home extends Fragment {
         builder.create().show();
     }
 
-    public void choosePhotoFromGallery() {
-        galleryLauncher.launch("image/*");
-    }
 
 
 
 
-    private void uploadImageToFirebaseStorage() {
-        if (mImageUri != null) {
-            ProgressDialog progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setTitle("Uploading");
-            progressDialog.setMessage("Please wait...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-
-            final StorageReference imageReference = FirebaseStorage.getInstance().getReference("userprofiles").child(auth.getCurrentUser().getUid());
-            imageReference.putFile(mImageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        progressDialog.dismiss();
-                        // Image uploaded successfully
-                        // Now you can get the download URL and do something with it if needed
-                        imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            // Handle the download URL (e.g., save it to a database)
-                            imageUrl = uri.toString();
-                            // Update profileImageView with the uploaded image
-                            fetchProfileImage();
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        // Handle the error
-                        Toast.makeText(getActivity(), "Failed to upload image", Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
 
 
     private void fetchProfileImage() {

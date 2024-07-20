@@ -3,6 +3,7 @@ package com.example.LibraryBee.User_Pannel;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -18,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +28,6 @@ public class paymentActivity extends AppCompatActivity {
 
     Button send;
 
-    // Constants for request status
     private static final int REQUEST_PENDING = 0;
     private static final int REQUEST_APPROVED = 1;
     private static final int REQUEST_REJECTED = 2;
@@ -38,6 +40,7 @@ public class paymentActivity extends AppCompatActivity {
     private DatabaseReference usertimingSlotRef;
     private String selectedSeatNumber;
     private String selectedSlot;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,6 @@ public class paymentActivity extends AppCompatActivity {
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser != null) {
                     String userId = currentUser.getUid();
-                    // Now you have the user ID
                     // You can use this userId in your updateSubscriptionAndSeatStatus method
                     updateSubscriptionAndSeatStatus(userId);
                 } else {
@@ -127,36 +129,47 @@ public class paymentActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            String userName = currentUser.getDisplayName(); // Get the username from Firebase Authentication
             String userEmail = currentUser.getEmail();
 
-            // If the username is null, you can set it to the email address or any other default value
-            if (userName == null) {
-                userName = userEmail;
-            }
-
-            String price;
-
-
-            if ("Full Day".equals(selectedSlot)) {
-                price = "1000 rs/month";
-            } else {
-                price = "600 rs/month";
-            }
-
-            // Create a request object with user information and other details
-            Request request = new Request(userId, userName, userEmail, selectedSeatNumber, selectedSlot, price);
-
-            // Set the key as the userID when pushing the request to Firebase
-            DatabaseReference newRequestRef = requestRef.child(userId);
-            newRequestRef.setValue(request).addOnCompleteListener(new OnCompleteListener<Void>() {
+            // Fetch username from Firebase Realtime Database
+            DatabaseReference usernameRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("username");
+            usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(paymentActivity.this, "Request sent to admin", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(paymentActivity.this, "Failed to send request. Please try again.", Toast.LENGTH_SHORT).show();
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String username = dataSnapshot.getValue(String.class);
+
+                    // If the username is null, you can set it to the email address or any other default value
+                    if (username == null) {
+                        username = userEmail;
                     }
+
+                    String price;
+
+                    if ("Full Day".equals(selectedSlot)) {
+                        price = "1000 rs/month";
+                    } else {
+                        price = "600 rs/month";
+                    }
+
+                    Request request = new Request(userId, username, userEmail, selectedSeatNumber, selectedSlot, price);
+
+                    // Set the key as the userID when pushing the request to Firebase
+                    DatabaseReference newRequestRef = requestRef.child(userId);
+                    newRequestRef.setValue(request).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(paymentActivity.this, "Request sent to admin", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(paymentActivity.this, "Failed to send request. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Handle error
                 }
             });
         } else {
@@ -173,7 +186,7 @@ public class paymentActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Perform any actions after confirming
-                dialog.dismiss(); // Dismiss the dialog
+                dialog.dismiss();
             }
         });
         builder.show();
@@ -183,11 +196,9 @@ public class paymentActivity extends AppCompatActivity {
     // Other methods...
 
     private void updateSubscriptionAndSeatStatus(String userId) {
-        // Update user subscription in Firebase
 
         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("isSubscribed");
-        userRef.setValue(true); // Set the user as subscribed
-        // Update seat status in Firebase
+        userRef.setValue(true);
 
         DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference("users");
         userseatNumberRef = usersDatabase.child(userId).child("seatNumber");
@@ -195,9 +206,7 @@ public class paymentActivity extends AppCompatActivity {
         userseatNumberRef = usersDatabase.child(userId).child("seatNumber");
         usertimingSlotRef = usersDatabase.child(userId).child("timingSlot");
 
-        long currentTimestamp = System.currentTimeMillis();
-        DatabaseReference TimestampRef = usersDatabase.child(userId).child("subscriptionTimestamp");
-        TimestampRef.setValue(currentTimestamp);
+
 
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -210,9 +219,59 @@ public class paymentActivity extends AppCompatActivity {
         userseatNumberRef.setValue(selectedSeatNumber);
         usertimingSlotRef.setValue(selectedSlot);
 
-        // Perform additional actions based on selected slot (e.g., update reserve status list)
-        // Remember to handle different slot types (morning, evening, full day) accordingly
-        // For example:
+        usersDatabase.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String username = dataSnapshot.child("username").getValue(String.class);
+
+                // Get the list of usernames and IDs from Firebase
+                DatabaseReference usernamesRef = seatToUpdateRef.child("usernames");
+                DatabaseReference userIdsRef = seatToUpdateRef.child("userIds");
+
+                usernamesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                        List<String> usernamesList = dataSnapshot.getValue(t);
+                        if (usernamesList == null) {
+                            usernamesList = new ArrayList<>();
+                        }
+                        usernamesList.add(username);
+                        usernamesRef.setValue(usernamesList);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle error
+                    }
+                });
+
+                userIdsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                        List<String> userIdsList = dataSnapshot.getValue(t);
+                        if (userIdsList == null) {
+                            userIdsList = new ArrayList<>();
+                        }
+                        userIdsList.add(userId);
+                        userIdsRef.setValue(userIdsList);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle error
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+
+
         DatabaseReference reserveStatusListRef = seatToUpdateRef.child("reserveStatusList");
         // Update reserve status based on the user's timing slot
         switch (selectedSlot) {
@@ -226,20 +285,18 @@ public class paymentActivity extends AppCompatActivity {
                 reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(true);
                 break;
             default:
-                // Handle unknown slot
+
                 break;
         }
 
-        long reservationTimestamp = System.currentTimeMillis();
-        seatToUpdateRef.child("reservationTimestamp").setValue(reservationTimestamp);
+
 
         // Create a ScheduledThreadPoolExecutor with a single thread
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
 
-        long delayInMilliseconds = 30*24*60*60*1000;
+        long delayInMilliseconds = 5*60*1000;
         executor.schedule(() -> {
-            // Retrieve the reservation timestamp from Firebase
             seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -248,18 +305,78 @@ public class paymentActivity extends AppCompatActivity {
                         if (reservedAt != null && System.currentTimeMillis() - reservedAt >= delayInMilliseconds) {
                             // More than 12 hours have passed since reservation, revert changes
                             userRef.setValue(false);
-                            seatToUpdateRef.child("status").setValue("AVAILABLE");
-                            reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
-                            reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
-                            reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
                             userseatNumberRef.setValue("none");
                             usertimingSlotRef.setValue("none");
-                            TimestampRef.setValue(0);
+
+
+                            switch (selectedSlot) {
+                                case "Morning":
+                                    reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
+                                    break;
+                                case "Evening":
+                                    reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
+                                    break;
+                                case "Full Day":
+                                    reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
+                                    break;
+                                default:
+                                    // Handle unknown or invalid slot selection
+                                    Log.e("Error", "Invalid slot selection: " + selectedSlot);
+                                    break;
+                            }
+
+                            // Remove userId and username from seat node
+                            seatToUpdateRef.child("usernames").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                                    List<String> usernamesList = dataSnapshot.getValue(t);
+                                    if (usernamesList != null) {
+                                        // Retrieve the username from the Firebase Realtime Database
+                                        DatabaseReference usernameRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("username");
+                                        usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                String username = dataSnapshot.getValue(String.class);
+                                                if (username != null) {
+                                                    usernamesList.remove(username);
+                                                    seatToUpdateRef.child("usernames").setValue(usernamesList);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                // Handle error
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Handle error
+                                }
+                            });
+                            seatToUpdateRef.child("userIds").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                                    List<String> userIdsList = dataSnapshot.getValue(t);
+                                    if (userIdsList != null) {
+                                        userIdsList.remove(userId);
+                                        seatToUpdateRef.child("userIds").setValue(userIdsList);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Handle error
+                                }
+                            });
+
 
                             DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("requests");
                             requestsRef.child(userId).child("rejected").setValue(true);
-                            // Also remove the reservation timestamp
-                            seatToUpdateRef.child("reservationTimestamp").removeValue();
                         }
                     }
                 }
