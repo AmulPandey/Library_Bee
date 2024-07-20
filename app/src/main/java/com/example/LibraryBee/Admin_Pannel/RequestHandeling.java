@@ -348,94 +348,110 @@ public class RequestHandeling extends AppCompatActivity {
 
 
 //        // Create a ScheduledThreadPoolExecutor with a single thread
-//        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-//
-//        // Delay setting isSubscribed to false after 30 days
-//        long delayInMilliseconds =30*24*60*60*1000;
-//        executor.schedule(() -> {
-//            // Retrieve the reservation timestamp from Firebase
-//            seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    if (dataSnapshot.exists()) {
-//                        Long reservedAt = dataSnapshot.getValue(Long.class);
-//                        if (reservedAt != null && System.currentTimeMillis() - reservedAt >= delayInMilliseconds) {
-//                            // More than 12 hours have passed since reservation, revert changes
-//                             userRef.setValue(false);
-//                             userseatNumberRef.setValue("none");
-//                             usertimingSlotRef.setValue("none");
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+
+        // Delay setting isSubscribed to false after 30 days
+        long delayInMilliseconds =30*24*60*60*1000;
+        executor.schedule(() -> {
+            // Retrieve the reservation timestamp from Firebase
+            seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Long reservedAt = dataSnapshot.getValue(Long.class);
+                        if (reservedAt != null && System.currentTimeMillis() - reservedAt >= delayInMilliseconds) {
+                            // More than 12 hours have passed since reservation, revert changes
+                             userRef.setValue(false);
+                             userseatNumberRef.setValue("none");
+                             usertimingSlotRef.setValue("none");
 
 
 
-//                            seatToUpdateRef.child("status").setValue("AVAILABLE");
-//
+                            seatToUpdateRef.child("status").setValue("AVAILABLE");
 
 
-//                            switch (selectedSlot) {
-//            case "Morning":
-//                reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
-//                break;
-//            case "Evening":
-//                reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
-//                break;
-//            case "Full Day":
-//                reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
-//                break;
-//            default:
-//                // Handle unknown or invalid slot selection
-//                Log.e("Error", "Invalid slot selection: " + selectedSlot);
-//                break;
-//        }
+
+                            switch (selectedSlot) {
+                                  case "Morning":
+                                          reserveStatusListRef.child(Seat.ReserveStatus.MORNING.name()).setValue(false);
+                                          break;
+                                  case "Evening":
+                                          reserveStatusListRef.child(Seat.ReserveStatus.EVENING.name()).setValue(false);
+                                          break;
+                                  case "Full Day":
+                                          reserveStatusListRef.child(Seat.ReserveStatus.FULL_DAY.name()).setValue(false);
+                                         break;
+                                  default:
+                                         // Handle unknown or invalid slot selection
+                                          Log.e("Error", "Invalid slot selection: " + selectedSlot);
+                                          break;
+                            }
 
 
-//                            // Remove userId and username from seat node
-//        seatToUpdateRef.child("userIds").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-//                List<String> userIdsList = dataSnapshot.getValue(t);
-//                if (userIdsList != null) {
-//                    userIdsList.remove(userId);
-//                    seatToUpdateRef.child("userIds").setValue(userIdsList);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                // Handle error
-//            }
-//        });
-//
-//        seatToUpdateRef.child("usernames").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-//                List<String> usernamesList = dataSnapshot.getValue(t);
-//                if (usernamesList != null) {
-//                    usernamesList.remove(username);
-//                    seatToUpdateRef.child("usernames").setValue(usernamesList);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                // Handle error
-//            }
-//        });
-//
-//                            DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("requests");
-//                            requestsRef.child(userId).child("rejected").setValue(true);
-//
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//                    // Handle onCancelled
-//                }
-//            });
-//        }, delayInMilliseconds, TimeUnit.MILLISECONDS);
+                            // Remove userId and username from seat node
+                            seatToUpdateRef.child("usernames").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                                    List<String> usernamesList = dataSnapshot.getValue(t);
+                                    if (usernamesList != null) {
+                                        // Retrieve the username from the Firebase Realtime Database
+                                        DatabaseReference usernameRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("username");
+                                        usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                String username = dataSnapshot.getValue(String.class);
+                                                if (username != null) {
+                                                    usernamesList.remove(username);
+                                                    seatToUpdateRef.child("usernames").setValue(usernamesList);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                // Handle error
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Handle error
+                                }
+                            });
+                            seatToUpdateRef.child("userIds").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                                    List<String> userIdsList = dataSnapshot.getValue(t);
+                                    if (userIdsList != null) {
+                                        userIdsList.remove(userId);
+                                        seatToUpdateRef.child("userIds").setValue(userIdsList);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // Handle error
+                                }
+                            });
+
+
+
+                            DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("requests");
+                            requestsRef.child(userId).child("rejected").setValue(true);
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle onCancelled
+                }
+            });
+        }, delayInMilliseconds, TimeUnit.MILLISECONDS);
 
 
     }
@@ -491,7 +507,6 @@ public class RequestHandeling extends AppCompatActivity {
                 break;
         }
         // Remove userId and username from seat node
-
         seatToUpdateRef.child("usernames").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

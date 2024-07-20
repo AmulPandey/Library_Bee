@@ -28,9 +28,7 @@ public class paymentActivity extends AppCompatActivity {
 
     Button send;
 
-    private static final int REQUEST_PENDING = 0;
-    private static final int REQUEST_APPROVED = 1;
-    private static final int REQUEST_REJECTED = 2;
+
 
     private DatabaseReference requestRef;
     private DatabaseReference subscriptionRef;
@@ -294,8 +292,7 @@ public class paymentActivity extends AppCompatActivity {
         // Create a ScheduledThreadPoolExecutor with a single thread
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
-
-        long delayInMilliseconds = 5*60*1000;
+        long delayInMilliseconds = 12*60*60*1000;
         executor.schedule(() -> {
             seatToUpdateRef.child("reservationTimestamp").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
