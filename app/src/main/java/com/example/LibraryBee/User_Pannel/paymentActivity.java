@@ -11,8 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.LibraryBee.Admin_Pannel.Request;
+import com.example.LibraryBee.Request;
 import com.example.LibraryBee.R;
+import com.example.LibraryBee.Seat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -158,6 +159,33 @@ public class paymentActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(paymentActivity.this, "Request sent to admin", Toast.LENGTH_SHORT).show();
+
+                                // Check if there are more than 100 requests
+                                requestRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getChildrenCount() > 100) {
+                                            // Delete the oldest request
+                                            requestRef.orderByChild("timestamp").limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    DataSnapshot oldestRequestSnapshot = dataSnapshot.getChildren().iterator().next();
+                                                    oldestRequestSnapshot.getRef().removeValue();
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    // Handle error
+                                                }
+                                            });
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        // Handle error
+                                    }
+                                });
+
                             } else {
                                 Toast.makeText(paymentActivity.this, "Failed to send request. Please try again.", Toast.LENGTH_SHORT).show();
                             }

@@ -21,6 +21,7 @@
         android:name="com.example.LibraryBee.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -42,7 +43,7 @@
             android:name=".User_Pannel.BookRecommendActivity"
             android:exported="false" />
         <activity
-            android:name=".User_Pannel.FullScreenImageActivity"
+            android:name=".FullScreenImageActivity"
             android:exported="false" />
         <activity
             android:name=".Admin_Pannel.RequestHandeling"
@@ -92,6 +93,18 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD7BOZKLRKR35J_HaefjhbI8tBtuNj86Pw" />
 
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+
+
     </application>
+
+
 
 </manifest>

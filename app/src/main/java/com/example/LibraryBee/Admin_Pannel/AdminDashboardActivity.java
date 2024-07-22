@@ -1,7 +1,6 @@
 package com.example.LibraryBee.Admin_Pannel;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Request;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -26,18 +22,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.deeplabstudio.fcmsend.FCMSend;
 import com.example.LibraryBee.Auth.Login;
-import com.example.LibraryBee.MainActivity;
-import com.example.LibraryBee.User_Pannel.FullScreenImageActivity;
-import com.example.LibraryBee.User_Pannel.Message;
+import com.example.LibraryBee.FullScreenImageActivity;
+import com.example.LibraryBee.Message;
 
 import com.example.LibraryBee.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,18 +38,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -313,6 +293,34 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
                     // Send a push notification to all devices
                     sendPushNotification(messageText);
+
+                    // Check the total number of messages
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            long totalMessages = dataSnapshot.getChildrenCount();
+                            if (totalMessages > 100) {
+                                // Delete the oldest message
+                                DataSnapshot oldestMessageSnapshot = null;
+                                long oldestTimestamp = Long.MAX_VALUE;
+                                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                                    long timestamp = messageSnapshot.getValue(Message.class).getTimestamp();
+                                    if (timestamp < oldestTimestamp) {
+                                        oldestTimestamp = timestamp;
+                                        oldestMessageSnapshot = messageSnapshot;
+                                    }
+                                }
+                                if (oldestMessageSnapshot!= null) {
+                                    oldestMessageSnapshot.getRef().removeValue();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 })
                 .addOnFailureListener(e -> Toast.makeText(AdminDashboardActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show());
     }
@@ -347,11 +355,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         FCMSend.SetServerKey(serverKey);
 
-
         FCMSend.Builder build = new FCMSend.Builder(deviceToken)
                 .setBody(messageText)
                 .setTitle("Library Bee");
-
         String result = build.send().Result();
 
 
