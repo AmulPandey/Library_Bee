@@ -21,6 +21,7 @@ An Android application designed to manage library users and facilitate connectio
 
 ## **Technologies Used**
 
+* Programming Language: Java
 * Android: Primary platform for the app.
 * Firebase: Realtime Database, Firestore, Push Notification and Authentication services.
 * Google Maps: Integrated for location services.
