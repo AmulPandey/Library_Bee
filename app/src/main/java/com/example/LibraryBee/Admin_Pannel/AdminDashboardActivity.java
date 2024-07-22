@@ -32,6 +32,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deeplabstudio.fcmsend.FCMSend;
 import com.example.LibraryBee.Auth.Login;
 import com.example.LibraryBee.MainActivity;
+import com.example.LibraryBee.User_Pannel.FullScreenImageActivity;
 import com.example.LibraryBee.User_Pannel.Message;
 
 import com.example.LibraryBee.R;
@@ -167,20 +168,25 @@ public class AdminDashboardActivity extends AppCompatActivity {
         profileImageView = headerView.findViewById(R.id.imageViewProfile);
 
         profileImageView.setImageResource(R.drawable.bee_logo);
-
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start full-screen activity
+                Intent intent = new Intent(AdminDashboardActivity.this, FullScreenImageActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_logout) {
-                // Handle logout action
-                showLogoutDialog();
-            } else if (id == R.id.nav_contact_Library) {
+
+            if (id == R.id.nav_contact_Library) {
                 // Handle contact library action
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
                 builder.setTitle("Contact Library")
-                        .setMessage("Phone: 7007084705")
+                        .setMessage("Phone: 7007084705\n\nAddress: House No.76, 3/1, Site No. 1, Juhi Kalan, Kidwai Nagar, Kanpur, Uttar Pradesh 208011")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -194,7 +200,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 // Handle contact library action
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
                 builder.setTitle("Contact Developer")
-                        .setMessage("Phone: 9936474273\nEmail: amulpandey007@gmail.com")
+                        .setMessage("Phone: 9936474273\n\nEmail: amulpandey007@gmail.com")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

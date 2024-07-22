@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        bottomNavigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+        bottomNavigationView.setItemIconTintList(null);
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override

@@ -92,7 +92,6 @@ public class home extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         drawerLayout = view.findViewById(R.id.drawer_layout);
 
-
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
         navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
         navigationView.setItemIconTintList(null);
@@ -134,26 +133,11 @@ public class home extends Fragment {
                 // Handle navigation drawer item clicks
                 int id = item.getItemId();
 
-                    //Toast.makeText(getActivity(), "Profile Settings clicked", Toast.LENGTH_SHORT).show();
-                if (id == R.id.imageViewProfile) {
-                    // Handle contact library action
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Contact Developer")
-                            .setMessage("Phone: 9936474273\nEmail: amulpandey007@gmail.com")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Do nothing, just close the dialog
-                                }
-                            });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
                 if (id == R.id.nav_contact_Library) {
                     // Handle contact library action
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Contact Library")
-                            .setMessage("Phone: 7007084705")
+                            .setMessage("Phone: 7007084705\n\nAddress: House No.76, 3/1, Site No. 1, Juhi Kalan, Kidwai Nagar, Kanpur, Uttar Pradesh 208011")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -167,7 +151,7 @@ public class home extends Fragment {
                     // Handle contact library action
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Contact Developer")
-                            .setMessage("Phone: 9936474273\nEmail: amulpandey007@gmail.com")
+                            .setMessage("Phone: 9936474273\n\nEmail: amulpandey007@gmail.com")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
