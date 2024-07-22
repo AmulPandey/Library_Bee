@@ -1,18 +1,14 @@
 package com.example.LibraryBee.Admin_Pannel;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -30,24 +26,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.bumptech.glide.Glide;
+import com.deeplabstudio.fcmsend.FCMSend;
 import com.example.LibraryBee.Auth.Login;
-import com.example.LibraryBee.User_Pannel.FullScreenImageActivity;
+import com.example.LibraryBee.MainActivity;
 import com.example.LibraryBee.User_Pannel.Message;
+
 import com.example.LibraryBee.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -62,8 +72,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
 
     private CircleImageView profileImageView;
-
-
+    private static String serverKey = "AAAAPQNkwdg:APA91bEe33Q1ZS5MpT9X53F6yuXEEXa5vfqv6UsSzUfQIvH8xEJ3TUfKrBYmBA_O2hm7JkS3N3e4Q6OwIs3z50XCSLZO2XsDztX6ToQu3Hha37v-A5_grwCbMXvsL-yS3Olp-MGIUThx";
 
 
 
@@ -136,14 +145,22 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+        navigationView.setItemIconTintList(null);
 
-       // Change the text color of the menu items
+        // Change the text color of the menu items
         Menu menu = navigationView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
             spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
             item.setTitle(spanString);
+
+            if (i == 0) { // Assuming logout is the 1st item in the menu
+                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
+            }
+            else {
+                item.setIcon(R.drawable.contacttoauthors);
+            }
         }
 
         View headerView = navigationView.getHeaderView(0);
@@ -241,8 +258,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
 
-
-
     private void openSendMessageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AdminDashboardActivity.this);
         builder.setTitle("Send Message");
@@ -264,6 +279,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 }
             }
         });
+
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -281,36 +297,91 @@ public class AdminDashboardActivity extends AppCompatActivity {
         // Create a unique key for the message
         String messageId = databaseReference.push().getKey();
 
-        // Create a Message object
+        // Create a Message object (Assuming you have a Message class)
         Message message = new Message(messageText, "LibraryBee", System.currentTimeMillis());
 
         // Save the message to Firebase Realtime Database
         databaseReference.child(messageId).setValue(message)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(AdminDashboardActivity.this, "Message sent successfully!", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(AdminDashboardActivity.this, "Message sent successfully!", Toast.LENGTH_SHORT).show();
 
-                        // Send a push notification to all devices
-                        //sendPushNotification(messageText);
-                    }
+                    // Send a push notification to all devices
+                    sendPushNotification(messageText);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(AdminDashboardActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(AdminDashboardActivity.this, "Failed to send message.", Toast.LENGTH_SHORT).show());
     }
 
 
+    private void sendPushNotification(String messageText) {
+        // Get a reference to the Firebase Realtime Database
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        // Retrieve all device tokens
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String deviceToken = userSnapshot.child("deviceToken").getValue(String.class);
+                    if (deviceToken != null && !deviceToken.isEmpty()) {
+                        // Send notification to the device token
+                        sendNotificationToDevice(deviceToken, messageText);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(AdminDashboardActivity.this, "Failed to retrieve device tokens.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void sendNotificationToDevice(String deviceToken, String messageText) {
+
+        FCMSend.SetServerKey(serverKey);
+
+
+        FCMSend.Builder build = new FCMSend.Builder(deviceToken)
+                .setBody(messageText)
+                .setTitle("Library Bee");
+
+        String result = build.send().Result();
 
 
 
-
-
-
-
+        if (result!= null) {
+            // Notification sent successfully
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(AdminDashboardActivity.this, "Push notification sent successfully!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Failed to send notification
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(AdminDashboardActivity.this, "Failed to send push notification.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

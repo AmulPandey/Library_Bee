@@ -1,9 +1,13 @@
 package com.example.LibraryBee.Auth;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -22,10 +26,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 public class Signup extends AppCompatActivity {
 
@@ -124,12 +131,16 @@ public class Signup extends AppCompatActivity {
 
                                                     String joiningDate = getCurrentDate();
 
+                                                    // Get the device token
+                                                    getDeviceToken(Signup.this);
+
+
                                                     // Save additional user data to the Firebase Realtime Database
                                                     User user = new User(userId, email, username, phoneNumber, gender, isSubscribed);
                                                     usersDatabase.child(userId).setValue(user);
                                                     user.setJoiningDate(joiningDate);
-                                                    user.setSubscriptionTimestamp(System.currentTimeMillis());
 
+                                                    user.setSubscriptionTimestamp(System.currentTimeMillis());
                                                     // Sign up successful, navigate to user dashboard
                                                     Intent intent = new Intent(Signup.this, MainActivity.class);
                                                     startActivity(intent);
@@ -166,6 +177,32 @@ public class Signup extends AppCompatActivity {
         Date currentDate = new Date();
         return dateFormat.format(currentDate);
     }
+
+    private void getDeviceToken(Context context) {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("Signup", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    // Get the FCM registration token
+                    String token = task.getResult();
+                    Log.d("Signup", "FCM Registration Token: " + token);
+
+                    // Save the token or send it to your server
+                    saveDeviceToken(token);
+                });
+    }
+
+    private void saveDeviceToken(String token) {
+        // Implement this method to save the token or send it to your server
+        // For example, you can save it to the Firebase Realtime Database
+        DatabaseReference usersDatabase = FirebaseDatabase.getInstance().getReference("users");
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        usersDatabase.child(userId).child("deviceToken").setValue(token);
+    }
+
 }
 
 

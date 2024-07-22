@@ -4,7 +4,8 @@
     <group>
         <item
             android:id="@+id/nav_logout"
-            android:title="Logout" />
+            android:title="Logout"
+           />
     </group>
 
     <group>

@@ -95,18 +95,37 @@ public class home extends Fragment {
 
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
         navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+        navigationView.setItemIconTintList(null);
 
-// Change the text color of the menu items
+        // Change the text color of the menu items
         Menu menu = navigationView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
             spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
             item.setTitle(spanString);
+
+            // Set icon for logout item
+            if (i == 0) { // Assuming logout is the 1st item in the menu
+                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
+            }
+            else {
+                item.setIcon(R.drawable.contacttoauthors);
+            }
         }
+
+
 
         View headerView = navigationView.getHeaderView(0);
         profileImageView = headerView.findViewById(R.id.imageViewProfile);
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start full-screen activity
+                Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -116,7 +135,20 @@ public class home extends Fragment {
                 int id = item.getItemId();
 
                     //Toast.makeText(getActivity(), "Profile Settings clicked", Toast.LENGTH_SHORT).show();
-
+                if (id == R.id.imageViewProfile) {
+                    // Handle contact library action
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Contact Developer")
+                            .setMessage("Phone: 9936474273\nEmail: amulpandey007@gmail.com")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Do nothing, just close the dialog
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 if (id == R.id.nav_contact_Library) {
                     // Handle contact library action
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

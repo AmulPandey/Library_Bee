@@ -1,8 +1,10 @@
 package com.example.LibraryBee.Auth;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.LibraryBee.Admin_Pannel.AdminDashboardActivity;
 import com.example.LibraryBee.MainActivity;
@@ -38,10 +42,21 @@ public class Login extends AppCompatActivity {
     private TextView forgotPasswordTextView;
     private LinearLayout loginLayout;
 
+    private static final int REQUEST_PERMISSIONS = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!= PackageManager.PERMISSION_GRANTED) {
+            // Request permissions
+            requestPermissions();
+        } else {
+            // Permissions are already granted, proceed with your app's logic
+        }
         initializeViews();
         auth = FirebaseAuth.getInstance();
         checkCurrentUser();
@@ -219,5 +234,25 @@ public class Login extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.POST_NOTIFICATIONS
+        }, REQUEST_PERMISSIONS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissions are granted, proceed with your app's logic
+            } else {
+                // Permissions are denied, show a message to the user
+            }
+        }
     }
 }

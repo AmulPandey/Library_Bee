@@ -5,8 +5,15 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C2185B"
+    android:background="@color/white"
     tools:context=".User_Pannel.home">
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -92,6 +99,8 @@
             app:layout_constraintTop_toBottomOf="@+id/button_send_message" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"

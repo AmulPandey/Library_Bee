@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_yellow_tint">
+
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -23,11 +31,12 @@
 
     <LinearLayout
         android:id="@+id/loginLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="300dp"
         android:orientation="vertical"
         android:padding="16dp"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -37,31 +46,49 @@
 
         <!-- Add your EditText, Button, and TextView here -->
 
-        <EditText
-            android:id="@+id/emailEditText"
-            android:layout_width="200dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email/Username"
-            android:minHeight="48dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/passwordEditText"
-            android:layout_width="200dp"
+            <EditText
+                android:id="@+id/emailEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Email"
+                android:gravity="center_horizontal"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+
+        </LinearLayout>
+
 
 
         <Button
             android:id="@+id/loginButton"
             android:layout_width="200dp"
-            android:layout_height="49dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_btn"
             android:text="Login"
@@ -73,7 +100,6 @@
             android:id="@+id/forgotPasswordTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:text="Forgot Password?"
             android:textColor="#00796B"
@@ -83,16 +109,17 @@
             android:id="@+id/signUpTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:text="Don't have an account? Sign up"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:textColor="#2196F3" />
 
 
         <Button
             android:id="@+id/loginAdminButton"
             android:layout_width="200dp"
-            android:layout_height="49dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_btn"
             android:text="Login as Admin"
@@ -123,3 +150,5 @@
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

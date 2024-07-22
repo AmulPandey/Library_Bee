@@ -60,6 +60,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
     implementation 'com.opencsv:opencsv:5.3'
+    implementation 'com.github.uguraltinsoy:FCMSend:1.0.5'
 
 
 }

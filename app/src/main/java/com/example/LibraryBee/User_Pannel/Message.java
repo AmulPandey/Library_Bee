@@ -1,6 +1,6 @@
 package com.example.LibraryBee.User_Pannel;
 
-public class Message {
+public class Message{
 
     private String messageText;
     private String sender;

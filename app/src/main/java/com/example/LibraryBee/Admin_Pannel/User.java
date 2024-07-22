@@ -16,6 +16,7 @@ public class User {
     public String timingSlot;
     public String seatNumber;
     public String joiningDate;
+    public String deviceToken;
 
 
     // Default constructor
@@ -34,6 +35,16 @@ public class User {
         this.timingSlot = "none";
         this.seatNumber = "none";
         this.joiningDate = getCurrentDate();
+        this.deviceToken = "";
+    }
+
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public long getSubscriptionTimestamp() {

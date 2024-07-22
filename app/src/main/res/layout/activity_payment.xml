@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:background="#FBC02D"
     tools:context=".User_Pannel.paymentActivity">
 
 
   <Button
       android:id="@+id/send"
-      android:layout_width="match_parent"
+      android:layout_width="200dp"
       android:layout_height="50dp"
-      android:layout_alignParentStart="true"
-      android:layout_alignParentTop="true"
-      android:layout_alignParentEnd="true"
-      android:layout_alignParentBottom="true"
-      android:layout_marginStart="22dp"
-      android:layout_marginTop="340dp"
-      android:layout_marginEnd="27dp"
-      android:layout_marginBottom="341dp"
       android:background="@drawable/custom_btn"
       android:text="Confirm My Seat"
       android:textColor="@color/black"
