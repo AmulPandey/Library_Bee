@@ -1,41 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item android:id="@+id/nav_home"
-        android:icon="@drawable/ic_menu_dashboard"
-        android:title="Home"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/nav_map"
-        android:icon="@drawable/ic_menu_gymlocation"
-        android:title="Map"
-        app:showAsAction="collapseActionView"/>
-
-
-<!--    <item android:id="@+id/nav_members"-->
-<!--        android:icon="@drawable/ic_menu_memberlist"-->
-<!--        android:title="Members"-->
-<!--        app:showAsAction="collapseActionView"/>-->
-
-
-
-<!--    <item android:id="@+id/nav_utilities"-->
-<!--        android:icon="@drawable/baseline_attribution_24"-->
-<!--        android:title="utilities"-->
-<!--        app:showAsAction="collapseActionView"/>-->
-
-
-
-
-    <item android:id="@+id/nav_notificatios"
-        android:icon="@drawable/ic_menu_reminder"
-        android:title="Notifications"
-        app:showAsAction="collapseActionView"/>
-
-<!--    <item android:id="@+id/nav_search"-->
-<!--        android:icon="@drawable/baseline_search_24"-->
-<!--        android:title="search"-->
-<!--        app:showAsAction="collapseActionView"/>-->
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/homeicon"
+        android:title="Home" />
+    <item
+        android:id="@+id/mapFragment"
+        android:icon="@drawable/location_icon"
+        android:title="Location" />
+    <item
+        android:id="@+id/notificationsFragment"
+        android:icon="@drawable/notification_bell"
+        android:title="Notifications" />
 </menu>

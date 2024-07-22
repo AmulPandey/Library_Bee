@@ -1,13 +1,22 @@
 package com.example.LibraryBee;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavGraph;
+import androidx.navigation.Navigation;
+
 import android.app.ProgressDialog;
 import android.os.Bundle;
+
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import android.view.MenuItem;
 
 import com.example.LibraryBee.User_Pannel.Seat;
@@ -30,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private BottomNavigationView btnview;
     private ProgressDialog progressDialog;
-
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,27 +107,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = navHostFragment.getNavController();
 
-        btnview = findViewById(R.id.btnview);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
-        btnview.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-
-                if (id == R.id.nav_home) {
-                    loadfrag(new home(), false);
-                } else if (id == R.id.nav_map) {
-                    loadfrag(new maps(), false);
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if (destination.getId() == R.id.homeFragment ||
+                        destination.getId() == R.id.mapFragment ||
+                        destination.getId() == R.id.notificationsFragment) {
+                    // Handle actions for specific destinations if needed
                 } else {
-                    // Handle other menu items
-                    loadfrag(new notifications(), false);
+                    // Handle actions for other destinations if needed
                 }
-                return true;
             }
         });
 
-        btnview.setSelectedItemId(R.id.nav_home);
+
+
     }
 
     @Override
@@ -135,21 +145,5 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .show();
     }
-
-
-
-    // Method to load fragments
-    public void loadfrag(Fragment fragment, boolean flag) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (flag)
-            ft.add(R.id.container, fragment);
-        else
-            ft.replace(R.id.container, fragment);
-        ft.commit();
-    }
-
-
-
 }
 
