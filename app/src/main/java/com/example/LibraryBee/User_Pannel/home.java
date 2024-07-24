@@ -335,9 +335,6 @@ public class home extends Fragment {
 
 
 
-
-
-
     private void fetchProfileImage() {
         if (!isAdded()) {
             // Fragment is not attached, return
@@ -361,8 +358,8 @@ public class home extends Fragment {
             // Load the image into the profileImageView using Glide or Picasso
             Glide.with(context)
                     .load(uri)
-                    .placeholder(R.drawable.profile) // Placeholder image while loading
-                    .error(R.drawable.profile) // Image to display in case of error
+                    .placeholder(R.drawable.userprofile) // Placeholder image while loading
+                    .error(R.drawable.userprofile) // Image to display in case of error
                     .into(profileImageView);
 
             profileImageView.setOnClickListener(v -> {

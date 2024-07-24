@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,6 +31,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+
 public class Login extends AppCompatActivity {
 
     private EditText emailEditText;
@@ -37,6 +41,8 @@ public class Login extends AppCompatActivity {
     private Button loginButton;
     private TextView signUpTextView;
     private Button loginAdminButton;
+
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private FirebaseAuth auth;
 
     private TextView forgotPasswordTextView;
@@ -48,6 +54,15 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Initialize Firebase Remote Config
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+
+        // Set default Remote Config parameter values
+        //mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_defaults);
+
+        // Fetch Remote Config parameters
+        fetchRemoteConfig();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
@@ -130,8 +145,8 @@ public class Login extends AppCompatActivity {
 
 
     private void checkAdminStatus() {
-        String adminEmail = "admin@gmail.com";
-        String adminPassword = "654321";
+        String adminEmail = mFirebaseRemoteConfig.getString("admin_email");
+        String adminPassword = mFirebaseRemoteConfig.getString("admin_password");
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -159,10 +174,24 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void loginAsAdmin() {
+    private void fetchRemoteConfig() {
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600) // Fetch interval in seconds
+                .build();
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
 
-        String adminEmail = "admin@gmail.com";
-        String adminPassword = "654321";
+        mFirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        boolean updated = task.getResult();
+                        Log.d("RemoteConfig", "Config params updated: " + updated);
+                    } else {
+                        Log.d("RemoteConfig", "Fetch failed");
+                    }
+                });
+    }
+
+    private void loginAsAdmin() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -170,6 +199,9 @@ public class Login extends AppCompatActivity {
             showToast("Please enter email and password");
             return;
         }
+
+        String adminEmail = mFirebaseRemoteConfig.getString("admin_email");
+        String adminPassword = mFirebaseRemoteConfig.getString("admin_password");
 
         if (!email.equals(adminEmail) || !password.equals(adminPassword)) {
             showToast("Invalid admin credentials");
@@ -179,7 +211,6 @@ public class Login extends AppCompatActivity {
         saveUserType("Admin");
         navigateToDashboard("Admin");
         finish();
-
     }
 
     private void navigateToSignup() {

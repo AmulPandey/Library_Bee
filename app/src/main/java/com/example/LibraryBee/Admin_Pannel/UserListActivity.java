@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.LibraryBee.R;
+import com.example.LibraryBee.User;
 import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;

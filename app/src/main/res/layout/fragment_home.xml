@@ -11,8 +11,6 @@
     tools:context=".User_Pannel.home">
 
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -61,15 +59,13 @@
             android:id="@+id/gridLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
             android:columnCount="2"
             android:rowCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.078"
+            app:layout_constraintVertical_bias="0.120000005"
             tools:ignore="ExtraText">
 
             <Button
@@ -116,8 +112,8 @@
 
             <Button
                 android:id="@+id/btn4"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="155dp"
+                android:layout_height="148dp"
                 android:layout_row="1"
                 android:layout_column="1"
                 android:layout_margin="5dp"
@@ -134,7 +130,6 @@
         </GridLayout>
 
 
-
         <Button
             android:id="@+id/btn5"
             android:layout_width="150dp"
@@ -142,16 +137,15 @@
             android:layout_row="2"
             android:layout_column="1"
             android:layout_margin="5dp"
-            android:layout_marginTop="141dp"
             android:background="@drawable/custom_btn"
             android:contentDescription="btn"
-            android:text="book\nRecomend"
+            android:text="Book  Buzz"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:src="@drawable/pngcolor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gridLayout"
             app:layout_constraintVertical_bias="0.0" />

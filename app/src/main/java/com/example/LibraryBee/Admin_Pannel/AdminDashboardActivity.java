@@ -148,15 +148,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         profileImageView = headerView.findViewById(R.id.imageViewProfile);
 
         profileImageView.setImageResource(R.drawable.bee_logo);
-        profileImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start full-screen activity
-                Intent intent = new Intent(AdminDashboardActivity.this, FullScreenImageActivity.class);
-                startActivity(intent);
-            }
-        });
-
 
 
         navigationView.setNavigationItemSelectedListener(item -> {

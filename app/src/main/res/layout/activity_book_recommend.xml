@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:gravity="center"
     android:orientation="vertical">
 
 
@@ -25,21 +26,22 @@
             android:id="@+id/search_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#2A090909"
+            android:background="@color/white"
             android:text="Search"
             android:textColor="@color/black"/>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:textColor="@color/black"
-        android:textStyle="bold"
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:background="@drawable/custom_btn"
         android:gravity="center"
+        android:padding="10dp"
+        android:text="Recommended Reads"
+        android:textColor="@color/black"
         android:textSize="15dp"
-        android:text="***Books Recommendation Section***"/>
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

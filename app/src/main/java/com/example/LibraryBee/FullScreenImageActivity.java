@@ -53,9 +53,13 @@ public class FullScreenImageActivity extends AppCompatActivity {
             imageUrl = intent.getStringExtra("IMAGE_URL");
             userId = intent.getStringExtra("USER_ID");
 
-            Glide.with(this)
-                    .load(imageUrl)
-                    .into(fullScreenImageView);
+            if (imageUrl != null) {
+                Glide.with(this)
+                        .load(imageUrl)
+                        .into(fullScreenImageView);
+            } else {
+                fullScreenImageView.setImageResource(R.drawable.userprofile);
+            }
         }
 
         deleteButton.setOnClickListener(v -> {
