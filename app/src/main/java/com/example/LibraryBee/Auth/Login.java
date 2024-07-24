@@ -1,7 +1,6 @@
 package com.example.LibraryBee.Auth;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,8 +21,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.LibraryBee.Admin_Pannel.AdminDashboardActivity;
-import com.example.LibraryBee.MainActivity;
 import com.example.LibraryBee.R;
+import com.example.LibraryBee.User_Pannel.UserDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,6 +54,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        initializeViews();
+        auth = FirebaseAuth.getInstance();
+        checkCurrentUser();
+        setListeners();
+
         // Initialize Firebase Remote Config
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
@@ -72,10 +76,6 @@ public class Login extends AppCompatActivity {
         } else {
             // Permissions are already granted, proceed with your app's logic
         }
-        initializeViews();
-        auth = FirebaseAuth.getInstance();
-        checkCurrentUser();
-        setListeners();
 
     }
 
@@ -220,7 +220,7 @@ public class Login extends AppCompatActivity {
     private void navigateToDashboard(String userType) {
         Intent intent = userType.equals("Admin") ?
                 new Intent(Login.this, AdminDashboardActivity.class) :
-                new Intent(Login.this, MainActivity.class);
+                new Intent(Login.this, UserDashboardActivity.class);
         startActivity(intent);
     }
 

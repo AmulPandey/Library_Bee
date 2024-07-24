@@ -1,18 +1,23 @@
-package com.example.LibraryBee;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
+package com.example.LibraryBee.User_Pannel;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.LibraryBee.R;
+import com.example.LibraryBee.Seat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class UserDashboardActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private BottomNavigationView btnview;
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_user_dashboard);
 
         FirebaseApp.initializeApp(this);
 
@@ -138,4 +143,3 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 }
-

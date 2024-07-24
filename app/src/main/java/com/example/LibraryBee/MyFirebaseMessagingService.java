@@ -1,7 +1,6 @@
 package com.example.LibraryBee;
 
-import com.example.LibraryBee.MainActivity;
-import com.example.LibraryBee.R;
+import com.example.LibraryBee.User_Pannel.UserDashboardActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import android.app.NotificationChannel;
@@ -32,7 +31,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String title, String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, UserDashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 

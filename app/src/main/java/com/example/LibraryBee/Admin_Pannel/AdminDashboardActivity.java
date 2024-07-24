@@ -25,7 +25,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.deeplabstudio.fcmsend.FCMSend;
 import com.example.LibraryBee.Auth.Login;
-import com.example.LibraryBee.FullScreenImageActivity;
 import com.example.LibraryBee.Message;
 
 import com.example.LibraryBee.R;

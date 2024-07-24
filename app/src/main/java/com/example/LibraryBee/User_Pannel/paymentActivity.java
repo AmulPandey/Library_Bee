@@ -3,6 +3,7 @@ package com.example.LibraryBee.User_Pannel;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.LibraryBee.Request;
 import com.example.LibraryBee.R;
 import com.example.LibraryBee.Seat;
@@ -39,6 +41,8 @@ public class paymentActivity extends AppCompatActivity {
     private DatabaseReference usertimingSlotRef;
     private String selectedSeatNumber;
     private String selectedSlot;
+
+    private LottieAnimationView animationView;
 
 
     @Override
@@ -120,7 +124,9 @@ public class paymentActivity extends AppCompatActivity {
     }
 
     void initializeViews() {
+        animationView = findViewById(R.id.lottieAnimationView);
         send = findViewById(R.id.send);
+
     }
 
     void generateAndSendRequest() {
@@ -205,17 +211,27 @@ public class paymentActivity extends AppCompatActivity {
     }
 
     private void showConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Confirmation");
-        builder.setMessage("THANKS FOR CONFIRMING YOUR SEAT\n\nYour seat has been booked temporarily for the next 12 hours. To make it permanent for a month, please go to Library Bee and make payment accordingly.");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        // Start the animation
+        animationView.playAnimation();
+
+        // Wait for 1.5 seconds before showing the dialog
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Perform any actions after confirming
-                dialog.dismiss();
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(paymentActivity.this);
+                builder.setTitle("Confirmation");
+                builder.setMessage("THANKS FOR CONFIRMING YOUR SEAT\n\nYour seat has been booked temporarily for the next 12 hours. To make it permanent for a month, please go to Library and make payment accordingly.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Stop the animation
+                        animationView.cancelAnimation();
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
             }
-        });
-        builder.show();
+        }, 2000); // 1500 milliseconds = 1.5 seconds
     }
 
 

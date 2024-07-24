@@ -31,7 +31,6 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.LibraryBee.Auth.Login;
-import com.example.LibraryBee.FullScreenImageActivity;
 import com.example.LibraryBee.R;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;

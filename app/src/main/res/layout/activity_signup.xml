@@ -13,7 +13,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_yellow_tint">
+    android:background="@drawable/background_auth">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -188,9 +188,9 @@
         <Button
             android:id="@+id/registerButton"
             android:layout_width="200dp"
-            android:layout_height="49dp"
+            android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/btnshape"
+            android:background="@drawable/custom_btn"
             android:text="Register"
             android:textColor="#212121" />
 

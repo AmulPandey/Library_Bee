@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0B0B">
+    android:background="@drawable/seats_background">
 
     <RadioGroup
         android:id="@+id/radioGroupSlots"
@@ -21,19 +30,25 @@
             android:id="@+id/radioFullDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Full Day" />
+            android:text="Full Day"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
 
         <RadioButton
             android:id="@+id/radioMorning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Morning" />
+            android:text="Morning"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
 
         <RadioButton
             android:id="@+id/radioEvening"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Evening" />
+            android:text="Evening"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
 
     </RadioGroup>
 
@@ -72,7 +87,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="160dp"
         android:background="@drawable/custom_btn"
-        android:text="Continue"
+        android:text="Confirm"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,3 +95,5 @@
         app:layout_constraintTop_toBottomOf="@+id/gridView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

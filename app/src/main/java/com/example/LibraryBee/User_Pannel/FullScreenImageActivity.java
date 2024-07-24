@@ -1,4 +1,4 @@
-package com.example.LibraryBee;
+package com.example.LibraryBee.User_Pannel;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.LibraryBee.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -82,7 +83,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
             });
         }
 
-        Intent home = new Intent(FullScreenImageActivity.this, MainActivity.class);
+        Intent home = new Intent(FullScreenImageActivity.this, UserDashboardActivity.class);
         startActivity(home);
     }
 
@@ -102,7 +103,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
             imageReference.putFile(mImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         progressDialog.dismiss();
-                        Intent home = new Intent(FullScreenImageActivity.this, MainActivity.class);
+                        Intent home = new Intent(FullScreenImageActivity.this, UserDashboardActivity.class);
                         startActivity(home);
                         // Image uploaded successfully
                         // Now you can get the download URL and do something with it if needed

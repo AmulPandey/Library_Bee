@@ -15,9 +15,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.LibraryBee.MainActivity;
 import com.example.LibraryBee.R;
 import com.example.LibraryBee.User;
+import com.example.LibraryBee.User_Pannel.UserDashboardActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -138,7 +138,7 @@ public class Signup extends AppCompatActivity {
 
                                                     user.setSubscriptionTimestamp(System.currentTimeMillis());
                                                     // Sign up successful, navigate to user dashboard
-                                                    Intent intent = new Intent(Signup.this, MainActivity.class);
+                                                    Intent intent = new Intent(Signup.this, UserDashboardActivity.class);
                                                     startActivity(intent);
                                                     finish();
                                                 } else {
