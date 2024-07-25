@@ -4,29 +4,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <!-- Header content goes here -->
-<!--    <ImageView-->
-<!--        android:id="@+id/imageViewProfile"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/logprofile"-->
-<!--        android:scaleType="centerCrop"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        android:layout_marginBottom="30dp"-->
-<!--        android:layout_gravity="center_horizontal"-->
-<!--        android:contentDescription="profile"-->
-<!--        />-->
-    <de.hdodenhof.circleimageview.CircleImageView
+
+    <com.google.android.material.imageview.ShapeableImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imageViewProfile"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/userprofile"
-        app:civ_border_width="2dp"
-        app:civ_border_color="#FFFFFF"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="20dp"
         android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="profile"/>
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

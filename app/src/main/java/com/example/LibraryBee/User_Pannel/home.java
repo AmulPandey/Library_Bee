@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.LibraryBee.Auth.Login;
 import com.example.LibraryBee.R;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +44,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class home extends Fragment {
 
@@ -62,11 +62,7 @@ public class home extends Fragment {
     private Button btn4;
     private Button btn5;
     private TextView usernameTextView;
-
-
-
-    private CircleImageView profileImageView;
-
+    private ShapeableImageView profileImageView;
 
 
 
@@ -89,25 +85,27 @@ public class home extends Fragment {
         drawerLayout = view.findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
-        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
         navigationView.setItemIconTintList(null);
 
-        // Change the text color of the menu items
-        Menu menu = navigationView.getMenu();
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem item = menu.getItem(i);
-            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
-            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
-            item.setTitle(spanString);
 
-            // Set icon for logout item
-            if (i == 0) { // Assuming logout is the 1st item in the menu
-                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
-            }
-            else {
-                item.setIcon(R.drawable.contacttoauthors);
-            }
-        }
+//        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+//
+//        // Change the text color of the menu items
+//        Menu menu = navigationView.getMenu();
+//        for (int i = 0; i < menu.size(); i++) {
+//            MenuItem item = menu.getItem(i);
+//            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
+//            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
+//            item.setTitle(spanString);
+//
+//            // Set icon for logout item
+//            if (i == 0) { // Assuming logout is the 1st item in the menu
+//                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
+//            }
+//            else {
+//                item.setIcon(R.drawable.contacttoauthors);
+//            }
+//        }
 
 
 

@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.example.LibraryBee.Auth.Login;
 import com.example.LibraryBee.Message;
 
 import com.example.LibraryBee.R;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,8 +38,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -51,8 +54,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private  Button button4;
 
 
-    private CircleImageView profileImageView;
-    private static String serverKey = "AAAAPQNkwdg:APA91bEe33Q1ZS5MpT9X53F6yuXEEXa5vfqv6UsSzUfQIvH8xEJ3TUfKrBYmBA_O2hm7JkS3N3e4Q6OwIs3z50XCSLZO2XsDztX6ToQu3Hha37v-A5_grwCbMXvsL-yS3Olp-MGIUThx";
+    private ShapeableImageView profileImageView;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private static String serverKey="" ;
 
 
 
@@ -62,6 +66,27 @@ public class AdminDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_dashboard);
 
         auth = FirebaseAuth.getInstance();
+
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+
+        // Set Remote Config settings
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600) // Fetch interval
+                .build();
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+
+        // Fetch the remote config values
+        mFirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Apply the fetched values
+                        serverKey = mFirebaseRemoteConfig.getString("fcm_server_key");
+                        // You can now use `serverKey` as needed
+                    } else {
+                        // Handle errors
+                        Log.e("AdminDashboardActivity", "Failed to fetch server key", task.getException());
+                    }
+                });
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -109,7 +134,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
 
-
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -124,24 +148,24 @@ public class AdminDashboardActivity extends AppCompatActivity {
         //toolbar.setBackgroundColor(getResources().getColor(R.color.black));
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
         navigationView.setItemIconTintList(null);
 
-        // Change the text color of the menu items
-        Menu menu = navigationView.getMenu();
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem item = menu.getItem(i);
-            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
-            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
-            item.setTitle(spanString);
-
-            if (i == 0) { // Assuming logout is the 1st item in the menu
-                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
-            }
-            else {
-                item.setIcon(R.drawable.contacttoauthors);
-            }
-        }
+//        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+//        // Change the text color of the menu items
+//        Menu menu = navigationView.getMenu();
+//        for (int i = 0; i < menu.size(); i++) {
+//            MenuItem item = menu.getItem(i);
+//            SpannableString spanString = new SpannableString(menu.getItem(i).getTitle().toString());
+//            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(android.R.color.black)), 0, spanString.length(), 0);
+//            item.setTitle(spanString);
+//
+//            if (i == 0) { // Assuming logout is the 1st item in the menu
+//                item.setIcon(R.drawable.logouticon); // Replace with your logout icon
+//            }
+//            else {
+//                item.setIcon(R.drawable.contacttoauthors);
+//            }
+//        }
 
         View headerView = navigationView.getHeaderView(0);
         profileImageView = headerView.findViewById(R.id.imageViewProfile);

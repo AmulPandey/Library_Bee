@@ -17,13 +17,13 @@ An Android application designed to manage library users and facilitate connectio
 * User Management: Admins can approve/reject user requests and manage user details.
 * Subscription Management: User subscriptions are managed through a SpringBoot server.
 * Detailed Overview: Load user-wise and seat-wise details.
-* Notifications: Admins can send notifications to users in their device.
+* Notifications: Admins can send notifications to users in their devices.
 
 ## **Technologies Used**
 
 * Android: Primary platform for the app.
 * Firebase: Realtime Database, Firestore, Push Notification and Authentication services.
-* Google Maps: Integrated for location services.
+* Google Maps API: Integrated for location services.
 * TensorFlow: ML model for book recommendations.
 * SpringBoot: Backend server for managing user subscriptions.
 

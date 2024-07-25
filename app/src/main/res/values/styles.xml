@@ -17,5 +17,25 @@
         <item name="android:queryHint">@android:color/black</item>
     </style>
 
+    <style name="CustomNavigationViewTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="navigationViewStyle">@style/CustomNavigationViewStyle</item>
+    </style>
+
+    <style name="CustomNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="android:background">@android:color/white</item>
+        <item name="itemTextAppearance">@style/CustomNavigationViewItemText</item>
+    </style>
+
+    <style name="CustomNavigationViewItemText" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+
+
+    <style name="roundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 
 </resources>
