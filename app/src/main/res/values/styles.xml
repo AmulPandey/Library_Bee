@@ -1,41 +1,39 @@
 <resources>
-<!--    &lt;!&ndash; Base application theme &ndash;&gt;-->
-<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-<!--        &lt;!&ndash; Customize your theme here &ndash;&gt;-->
-<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-<!--        <item name="colorAccent">@color/colorAccent</item>-->
-<!--    </style>-->
-
-    <!-- Custom SearchView Style -->
-    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <!-- Background color -->
-        <item name="android:background">#FFFFFF</item>
-        <!-- Text color -->
-        <item name="android:editTextColor">#000000</item>
-        <!-- Icon color -->
-        <item name="android:queryHint">@android:color/black</item>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="CustomNavigationViewTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="navigationViewStyle">@style/CustomNavigationViewStyle</item>
-    </style>
-
-    <style name="CustomNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
-        <item name="android:background">@android:color/white</item>
-        <item name="itemTextAppearance">@style/CustomNavigationViewItemText</item>
-    </style>
-
-    <style name="CustomNavigationViewItemText" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-
-
+    <!-- Additional styles -->
     <style name="roundedImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:editTextColor">#000000</item>
+        <item name="android:queryHint">@android:color/black</item>
+    </style>
 
+    <style name="CustomNavigationViewTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:background">@color/white</item>
+        <item name="itemTextColor">@color/black</item>
+    </style>
+
+    <style name="TextViewColor2" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="titleTextColor">@color/white</item>
+    </style>
+
+    <style name="BackgroundColor" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:background">@android:color/white</item>
+    </style>
 </resources>

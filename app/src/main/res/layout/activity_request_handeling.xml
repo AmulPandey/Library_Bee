@@ -1,11 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/BackgroundColor">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -26,11 +24,10 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="NO REQUEST FOUND"
-            android:textColor="@color/black"
+            style="@style/TextViewColor2"
             android:textSize="20sp"
             android:visibility="gone" />
 
-    </RelativeLayout>
 
 
 </RelativeLayout>

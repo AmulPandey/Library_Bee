@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    style="@style/BackgroundColor"
     android:orientation="vertical">
 
     <fragment
@@ -17,11 +17,10 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
-        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:itemIconTint="@color/icon_tint"
+        style="@style/CustomNavigationViewTheme"
         app:menu="@menu/nav_items" />
 
 </LinearLayout>

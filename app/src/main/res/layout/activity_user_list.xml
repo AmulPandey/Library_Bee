@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
-    android:background="@android:color/white"
+    style="@style/BackgroundColor"
     tools:context=".Admin_Pannel.UserListActivity">
 
     <!-- activity_user_list.xml -->
@@ -26,7 +26,7 @@
         android:layout_below="@id/searchView"
         android:layout_marginTop="3dp"
         android:text="Number of Users: "
-        android:textColor="@android:color/black"
+        style="@style/TextViewColor2"
         android:textSize="16sp"
         android:paddingLeft="10dp"/>
 

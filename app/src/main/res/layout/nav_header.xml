@@ -19,4 +19,14 @@
         android:clickable="true"
         android:layout_gravity="center_horizontal" />
 
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/dark_mode_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dark Mode"
+        style="@style/TextViewColor2"
+        android:padding="16dp"
+        android:gravity="center_vertical" />
+
 </LinearLayout>

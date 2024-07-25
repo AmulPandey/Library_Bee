@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -24,6 +26,8 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,8 +71,7 @@ public class home extends Fragment {
     private ShapeableImageView profileImageView;
     private View fragmentRootLayout;
 
-
-
+    SwitchCompat darkModeToggle;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,19 +81,43 @@ public class home extends Fragment {
         auth = FirebaseAuth.getInstance();
         fetchProfileImage();
 
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        NavigationView navigationView = view.findViewById(R.id.navigation_view);
+        navigationView.setItemIconTintList(null);
+
+        View headerView = navigationView.getHeaderView(0);
+        profileImageView = headerView.findViewById(R.id.imageViewProfile);
+        darkModeToggle = headerView.findViewById(R.id.dark_mode_toggle);
+
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("LibraryBeePrefs", Context.MODE_PRIVATE);
+        boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
+
+        darkModeToggle.setChecked(isDarkMode);
+
+
+        darkModeToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("dark_mode", isChecked);
+            editor.apply();
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+            // Recreate the activity to apply the theme change
+            getActivity().recreate();
+        });
+
         toolbar = view.findViewById(R.id.toolbar);
         drawerLayout = view.findViewById(R.id.drawer_layout);
         fragmentRootLayout = view.findViewById(R.id.fragment_root_layout);
 
-        NavigationView navigationView = view.findViewById(R.id.navigation_view);
-        navigationView.setItemIconTintList(null);
 
 
 //        navigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
@@ -113,9 +140,6 @@ public class home extends Fragment {
 //        }
 
 
-
-        View headerView = navigationView.getHeaderView(0);
-        profileImageView = headerView.findViewById(R.id.imageViewProfile);
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +148,8 @@ public class home extends Fragment {
                 startActivity(intent);
             }
         });
+
+
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -253,6 +279,7 @@ public class home extends Fragment {
         });
 
         registerForContextMenu(toolbar);
+
 
         return view;
     }

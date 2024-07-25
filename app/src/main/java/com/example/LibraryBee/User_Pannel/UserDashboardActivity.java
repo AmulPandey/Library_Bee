@@ -1,6 +1,8 @@
 package com.example.LibraryBee.User_Pannel;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -8,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,9 +35,11 @@ import java.util.ArrayList;
 public class UserDashboardActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private BottomNavigationView btnview;
+    private BottomNavigationView bottomNavigationView;
     private ProgressDialog progressDialog;
     private NavController navController;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
         auth = FirebaseAuth.getInstance();
+
 
         String userId = auth.getCurrentUser().getUid();
 
@@ -106,10 +112,10 @@ public class UserDashboardActivity extends AppCompatActivity {
                 .findFragmentById(R.id.nav_host_fragment);
         navController = navHostFragment.getNavController();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        bottomNavigationView.setBackgroundColor(getResources().getColor(android.R.color.white));
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
+
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override

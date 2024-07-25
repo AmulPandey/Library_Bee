@@ -10,5 +10,5 @@
     <item
         android:id="@+id/notificationsFragment"
         android:icon="@drawable/notification_bell"
-        android:title="Notifications" />
+        android:title="Notifications"/>
 </menu>

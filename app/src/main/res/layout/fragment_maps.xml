@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/BackgroundColor">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -11,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="#FBC02D"
         app:title="Map"
-        app:titleTextColor="#FFFFFF" />
+        style="@style/ToolbarStyle" />
 
     <fragment
         android:id="@+id/map"

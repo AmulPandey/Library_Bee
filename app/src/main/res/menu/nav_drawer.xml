@@ -18,7 +18,7 @@
         <item
             android:id="@+id/nav_contact_developer"
             android:title="Contact Developer"
-            android:icon="@drawable/contacttoauthors"/>
+            android:icon="@drawable/contacttoauthors" />
 
     </group>
 </menu>

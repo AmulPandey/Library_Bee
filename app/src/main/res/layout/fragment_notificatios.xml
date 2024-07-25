@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    style="@style/BackgroundColor"> <!-- Apply background color style here -->
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FBC02D"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:title="Notifications"
-        app:titleTextColor="#FFFFFF" />
+        style="@style/ToolbarStyle"
+        android:background="#FBC02D"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:clipToPadding="false"
         android:scrollbars="vertical"
-        android:background="#F5F5F5"
+        style="@style/BackgroundColor"
         android:visibility="gone"/>
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_centerInParent="true"
         android:text="No Notification Received Yet"
         android:textSize="16sp"
-        android:textColor="@color/black"
+        style="@style/TextViewColor2"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
