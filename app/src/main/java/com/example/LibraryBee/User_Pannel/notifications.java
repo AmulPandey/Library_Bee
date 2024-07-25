@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.LibraryBee.Message;
@@ -33,6 +34,7 @@ public class notifications extends Fragment {
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
     private DatabaseReference databaseReference;
+    private TextView noNotificationsTextView;
 
 
     public notifications() {
@@ -57,6 +59,8 @@ public class notifications extends Fragment {
         // Set up message adapter
         messageAdapter = new MessageAdapter(messageList);
         recyclerView.setAdapter(messageAdapter);
+
+        noNotificationsTextView = view.findViewById(R.id.noNotificationsTextView);
 
         // Listen for new messages
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -88,17 +92,19 @@ public class notifications extends Fragment {
                     }
                 });
 
-                // Add only the latest 15 messages to messageList
-                int count = 0;
-                for (Message message : tempList) {
-                    messageList.add(message);
-                    count++;
-                    if (count >= 15) {
-                        break;
-                    }
-                }
 
+
+                // Update the adapter and visibility of RecyclerView and TextView
+                messageList.addAll(tempList);
                 messageAdapter.notifyDataSetChanged();
+
+                if (messageList.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    noNotificationsTextView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    noNotificationsTextView.setVisibility(View.GONE);
+                }
 
 
             }

@@ -1,5 +1,6 @@
 package com.example.LibraryBee.Admin_Pannel;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,6 +53,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private Button seat;
 
     private  Button button4;
+    private View fragmentRootLayout;
 
 
     private ShapeableImageView profileImageView;
@@ -91,6 +93,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        fragmentRootLayout = findViewById(R.id.root_layout);
+
 
         userListButton = findViewById(R.id.userlistbutton);
         seat = findViewById(R.id.button2);
@@ -140,6 +144,36 @@ public class AdminDashboardActivity extends AppCompatActivity {
         toggle.setDrawerIndicatorEnabled(false);
         toggle.setHomeAsUpIndicator(R.drawable.ic_menu); // Set custom drawer icon
         toggle.syncState();
+
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                // This method is called when the drawer is being slid
+                // You can animate other views based on the slideOffset
+                // For example, you might animate the toolbar's alpha
+                toolbar.setAlpha(1 - slideOffset);
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                // This method is called when the drawer is fully opened
+                // Perform any action you want when the drawer opens
+                // Animate the fragment's root layout
+                ObjectAnimator animator = ObjectAnimator.ofFloat(fragmentRootLayout, "translationX", 0f, 50f);
+                animator.setDuration(300); // Duration of the animation
+                animator.start();
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                // This method is called when the drawer is fully closed
+                // Perform any action you want when the drawer closes
+                // Reverse the animation
+                ObjectAnimator animator = ObjectAnimator.ofFloat(fragmentRootLayout, "translationX", 50f, 0f);
+                animator.setDuration(300); // Duration of the animation
+                animator.start();
+            }
+        });
 
         // Set toolbar navigation click listener
         toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));

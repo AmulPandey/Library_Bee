@@ -2,6 +2,7 @@ package com.example.LibraryBee.User_Pannel;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 
 
 import android.view.ViewGroup;
@@ -63,6 +65,8 @@ public class home extends Fragment {
     private Button btn5;
     private TextView usernameTextView;
     private ShapeableImageView profileImageView;
+    private View fragmentRootLayout;
+
 
 
 
@@ -83,6 +87,7 @@ public class home extends Fragment {
 
         toolbar = view.findViewById(R.id.toolbar);
         drawerLayout = view.findViewById(R.id.drawer_layout);
+        fragmentRootLayout = view.findViewById(R.id.fragment_root_layout);
 
         NavigationView navigationView = view.findViewById(R.id.navigation_view);
         navigationView.setItemIconTintList(null);
@@ -173,22 +178,37 @@ public class home extends Fragment {
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         ) {
+
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                // This method is called when the drawer is being slid
+                // You can animate other views based on the slideOffset
+                // For example, you might animate the toolbar's alpha
+                toolbar.setAlpha(1 - slideOffset);
+            }
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-               // navigationView.setBackgroundColor(getResources().getColor(android.R.color.black));
                 getActivity().invalidateOptionsMenu(); // If you have action items to hide/show
+                // Animate the fragment's root layout
+                ObjectAnimator animator = ObjectAnimator.ofFloat(fragmentRootLayout, "translationX", 0f, 50f);
+                animator.setDuration(300); // Duration of the animation
+                animator.start();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 getActivity().invalidateOptionsMenu(); // If you have action items to hide/show
+                // Reverse the animation
+                ObjectAnimator animator = ObjectAnimator.ofFloat(fragmentRootLayout, "translationX", 50f, 0f);
+                animator.setDuration(300); // Duration of the animation
+                animator.start();
             }
         };
         drawerLayout.addDrawerListener(toggle);
 
-// Setting custom toggle icon
+        // Setting custom toggle icon
         toggle.setDrawerIndicatorEnabled(false);
         toggle.setHomeAsUpIndicator(R.drawable.ic_menu); // Set your custom drawable here
         toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
