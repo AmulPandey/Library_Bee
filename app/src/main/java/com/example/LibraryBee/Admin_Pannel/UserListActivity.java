@@ -3,11 +3,11 @@ package com.example.LibraryBee.Admin_Pannel;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.LibraryBee.R;
@@ -42,6 +42,7 @@ public class UserListActivity extends AppCompatActivity {
                 searchView.setIconified(false); // Expand the SearchView
             }
         });
+
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

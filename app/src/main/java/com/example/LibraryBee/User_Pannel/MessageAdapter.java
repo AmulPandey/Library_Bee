@@ -55,8 +55,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public void bind(Message message) {
             messageText.setText(message.getMessageText());
             senderText.setText("From: " + message.getSender());
-            timestampText.setText("Sent: " + message.getTimestamp());
-            timestampText.setText("Sent: " + message.getFormattedTimestamp());
+            timestampText.setText("Received: " + message.getTimestamp());
+            timestampText.setText("Received: " + message.getFormattedTimestamp());
         }
     }
 }

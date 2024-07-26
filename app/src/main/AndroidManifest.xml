@@ -35,9 +35,6 @@
             android:name=".User_Pannel.UserDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".User_Pannel.MembershipActivity"
-            android:exported="false" />
-        <activity
             android:name=".User_Pannel.BookRecommendActivity"
             android:exported="false" />
         <activity

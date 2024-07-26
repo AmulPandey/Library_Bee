@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Custom SearchView Style -->
-    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <!-- Background color -->
-        <item name="android:background">#FFFFFF</item>
-        <!-- Text color -->
-        <item name="android:editTextColor">#000000</item>
-        <!-- Icon color -->
-        <item name="android:queryHint">@android:color/black</item>
-    </style>
 
     <!-- Custom NavigationView Style -->
     <style name="CustomNavigationViewTheme" >
@@ -35,6 +26,11 @@
     <!-- Custom Background Color -->
     <style name="BackgroundColor" >
         <item name="android:background">@android:color/black</item>
+    </style>
+
+    <!-- Custom CradviewBackground Color -->
+    <style name="CardviewBackgroundColor" >
+        <item name="android:background">#FFDAB9</item>
     </style>
 
 

@@ -4,6 +4,7 @@ An Android application designed to manage library users and facilitate connectio
 
 ## **User Features**
 
+* Features like Light/Dark Modes for better UI Experience.
 * Profile Management: Users can create profiles and upload pictures.
 * Book Recommendations: Users receive book recommendations powered by a TensorFlow ML model.
 * Seat Selection: Simplified complex seat selection process.
@@ -17,11 +18,12 @@ An Android application designed to manage library users and facilitate connectio
 * User Management: Admins can approve/reject user requests and manage user details.
 * Subscription Management: User subscriptions are managed through a SpringBoot server.
 * Detailed Overview: Load user-wise and seat-wise details.
-* Notifications: Admins can send notifications to users in their devices.
+* Notifications: Admins can send notifications to users in their devices using FCM service.
 
 ## **Technologies Used**
 
 * Android: Primary platform for the app.
+* Development Method: Java & View Model.
 * Firebase: Realtime Database, Firestore, Push Notification and Authentication services.
 * Google Maps API: Integrated for location services.
 * TensorFlow: ML model for book recommendations.

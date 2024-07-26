@@ -483,7 +483,6 @@ public class RequestHandeling extends AppCompatActivity {
 
 
         // Perform additional actions based on selected slot (e.g., update reserve status list)
-
         DatabaseReference reserveStatusListRef = seatToUpdateRef.child("reserveStatusList");
 
         userRef.setValue(false);

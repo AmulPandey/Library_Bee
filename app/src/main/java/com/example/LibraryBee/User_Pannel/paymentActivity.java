@@ -29,10 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class paymentActivity extends AppCompatActivity {
 
-    Button send;
-
-
-
+    private Button send;
     private DatabaseReference requestRef;
     private DatabaseReference subscriptionRef;
     private DatabaseReference TimestampRef;
@@ -67,6 +64,9 @@ public class paymentActivity extends AppCompatActivity {
                 // Generate request and send to admin
                 generateAndSendRequest();
                 showConfirmationDialog();
+                send.setVisibility(View.GONE);
+
+
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser != null) {

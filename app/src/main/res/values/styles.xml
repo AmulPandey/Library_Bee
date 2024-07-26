@@ -13,11 +13,6 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="android:background">#FFFFFF</item>
-        <item name="android:editTextColor">#000000</item>
-        <item name="android:queryHint">@android:color/black</item>
-    </style>
 
     <style name="CustomNavigationViewTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:background">@color/white</item>
@@ -36,4 +31,10 @@
     <style name="BackgroundColor" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:background">@android:color/white</item>
     </style>
+
+    <!-- Custom CradviewBackground Color -->
+    <style name="CardviewBackgroundColor" >
+        <item name="android:background">#E6A8D7</item>
+    </style>
+
 </resources>

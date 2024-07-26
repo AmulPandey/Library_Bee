@@ -127,6 +127,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentRootLayout = findViewById(R.id.root_layout);
+        if (toolbar != null) {
+            toolbar.setTitleTextColor(getResources().getColor(android.R.color.white)); // White color
+        }
 
         userListButton = findViewById(R.id.userlistbutton);
         seat = findViewById(R.id.button2);

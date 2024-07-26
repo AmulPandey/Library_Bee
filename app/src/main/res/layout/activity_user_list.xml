@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
+    android:padding="8dp"
     style="@style/BackgroundColor"
     tools:context=".Admin_Pannel.UserListActivity">
 
     <!-- activity_user_list.xml -->
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="#8F8A8A"
+        android:background="#FFFFFF"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        />
+    />
 
     <TextView
         android:id="@+id/textViewUserCount"

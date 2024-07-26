@@ -9,6 +9,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,8 @@ public class SeatSelectionActivity extends AppCompatActivity {
     private RadioGroup radioGroupSlots;
     private GridView gridView;
     private Button btnConfirm;
+
+    private TextView showprice;
     private ArrayList<Seat> seatsList;
     private SeatAdapter seatAdapter;
     private String selectedSlot = "";
@@ -54,6 +57,7 @@ public class SeatSelectionActivity extends AppCompatActivity {
         radioGroupSlots = findViewById(R.id.radioGroupSlots);
         gridView = findViewById(R.id.gridView);
         btnConfirm = findViewById(R.id.btnConfirm);
+        showprice = findViewById(R.id.showprice);
 
         seatsList = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
@@ -73,6 +77,8 @@ public class SeatSelectionActivity extends AppCompatActivity {
             RadioButton radioButton = findViewById(checkedId);
             selectedSlot = radioButton.getText().toString();
             updateSeatAvailability();
+            showprice.setVisibility(View.VISIBLE);
+            updatePrice();
         });
 
 
@@ -197,8 +203,6 @@ public class SeatSelectionActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
-
 
     }
 
@@ -342,6 +346,16 @@ public class SeatSelectionActivity extends AppCompatActivity {
                 return Seat.ReserveStatus.EVENING;
             default:
                 return Seat.ReserveStatus.FULL_DAY;
+        }
+    }
+
+    private void updatePrice() {
+        if ("Full Day".equals(selectedSlot)) {
+            showprice.setText("1000 rs/month\n8am-8pm");
+        } else if("Morning".equals(selectedSlot)) {
+            showprice.setText("600 rs/month\n8am-2pm");
+        } else {
+            showprice.setText("600 rs/month\n2pm-8pm");
         }
     }
 
