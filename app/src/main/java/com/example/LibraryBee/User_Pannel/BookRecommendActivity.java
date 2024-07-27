@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,8 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -80,10 +79,8 @@ public class BookRecommendActivity extends AppCompatActivity {
             public void run() {
                 try {
                     recommendedBooks = getRecommendedBooks(BookRecommendActivity.this, searchQuery);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (CsvValidationException e) {
-                    throw new RuntimeException(e);
+                } catch (IOException | CsvValidationException e) {
+                    Log.e("BookRecommendActivity", "Error loading book recommendations", e);
                 }
 
                 runOnUiThread(new Runnable() {
@@ -97,23 +94,24 @@ public class BookRecommendActivity extends AppCompatActivity {
                 });
             }
         }).start();
+
+
     }
 
     private MappedByteBuffer loadModelFile(Context context) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(context.getFilesDir() + "/book_recommendation_model.tflite");
-        FileChannel fileChannel = fileInputStream.getChannel();
-        long startOffset = 0;
-        long declaredLength = fileChannel.size();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        try (FileInputStream fileInputStream = new FileInputStream(context.getFilesDir() + "/book_recommendation_model.tflite");
+             FileChannel fileChannel = fileInputStream.getChannel()) {
+            long startOffset = 0;
+            long declaredLength = fileChannel.size();
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        }
     }
 
     private List<Book> getRecommendedBooks(Context context, String searchQuery) throws IOException, CsvValidationException {
         List<Book> books = new ArrayList<>();
 
-        InputStream inputStream = context.getAssets().open("cleaned_Books.csv");
-        CSVReader csvReader = null;
-        try {
-            csvReader = new CSVReader(new InputStreamReader(inputStream));
+        try (InputStream inputStream = context.getAssets().open("cleaned_Books.csv");
+             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream))) {
             // Skip the header row
             csvReader.readNext();
 
@@ -123,7 +121,7 @@ public class BookRecommendActivity extends AppCompatActivity {
                     // Sanitize and parse the data
                     String title = nextLine[1].trim();
                     String author = nextLine[2].trim();
-                    int year = parseYear(nextLine[3].trim()); // Handle possible non-integer values
+                    int year = parseYear(nextLine[3].trim());
                     String imageUrl = nextLine[6].trim();
 
                     // Check if the search query matches any of the book features
@@ -140,66 +138,68 @@ public class BookRecommendActivity extends AppCompatActivity {
                 }
             }
 
-            // Use the TFLite model to make recommendations
-            List<Book> recommendedBooks = new ArrayList<>();
-            if (!searchQuery.isEmpty()) {
-                try {
-                    // Initialize the TFLite model
-                    BookRecommendationModel model = BookRecommendationModel.newInstance(context);
+            return recommendBooks(context, books, searchQuery);
 
-                    // Create the input buffer for the model
-                    TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 3005}, DataType.FLOAT32);
-                    ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 3005);
-                    byteBuffer.order(ByteOrder.nativeOrder());
-                    // Fill the ByteBuffer with data (replace with your actual preprocessing)
-                    byteBuffer.putFloat(searchQuery.hashCode()); // Example data; replace with actual encoding
-                    inputFeature0.loadBuffer(byteBuffer);
+        }
+    }
 
-                    // Run model inference
-                    BookRecommendationModel.Outputs outputs = model.process(inputFeature0);
-                    TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
-
-                    // Extract recommendations from the model's output
-                    float[] outputArray = outputFeature0.getFloatArray();
-                    // Interpret the output to get book recommendations (example logic)
-                    // Here you would map the output to book recommendations based on your model's design
-                    for (int i = 0; i < Math.min(outputArray.length, 5); i++) {
-                        Book book = books.get(i); // Replace with actual book retrieval based on model output
-                        recommendedBooks.add(book);
-                    }
-
-                    model.close();
-                } catch (IOException e) {
-                    Log.e("BookRecommendActivity", "Error loading model", e);
-                }
-
-            } else {
-                // Randomly select 5 books
-                Random random = new Random();
-                int booksSize = books.size();
-                for (int i = 0; i < 5 && booksSize > 0; i++) {
-                    int randomIndex = random.nextInt(booksSize);
-                    recommendedBooks.add(books.get(randomIndex));
-                    books.remove(randomIndex); // Remove selected book to avoid duplicates
-                    booksSize = books.size();
-                }
-            }
-
-            return recommendedBooks;
-        } finally {
-            if (csvReader != null) {
-                try {
-                    csvReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    private List<Book> recommendBooks(Context context, List<Book> books, String searchQuery) {
+        List<Book> recommendedBooks = new ArrayList<>();
+        if (!searchQuery.isEmpty()) {
             try {
-                inputStream.close();
+                // Initialize the TFLite model
+                BookRecommendationModel model = BookRecommendationModel.newInstance(context);
+
+                // Create the input buffer for the model
+                TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 3005}, DataType.FLOAT32);
+                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 3005);
+                byteBuffer.order(ByteOrder.nativeOrder());
+
+                // Fill the ByteBuffer with data (replace with your actual preprocessing)
+                byteBuffer.putFloat(searchQuery.hashCode()); // Example data; replace with actual encoding
+                inputFeature0.loadBuffer(byteBuffer);
+
+                // Run model inference
+                BookRecommendationModel.Outputs outputs = model.process(inputFeature0);
+                TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+                // Extract recommendations from the model's output
+                float[] outputArray = outputFeature0.getFloatArray();
+                // Interpret the output to get book recommendations (example logic)
+                if (!books.isEmpty()) {
+                    for (int i = 0; i < Math.min(outputArray.length, 5); i++) {
+                        if (i < books.size()) {
+                            Book book = books.get(i);
+                            recommendedBooks.add(book);
+                        }
+                    }
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(BookRecommendActivity.this, "No books found", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                model.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("BookRecommendActivity", "Error loading model", e);
+            }
+
+        } else {
+            // Randomly select 5 books
+            Random random = new Random();
+            int booksSize = books.size();
+            for (int i = 0; i < 5 && booksSize > 0; i++) {
+                int randomIndex = random.nextInt(booksSize);
+                recommendedBooks.add(books.get(randomIndex));
+                books.remove(randomIndex); // Remove selected book to avoid duplicates
+                booksSize = books.size();
             }
         }
+
+        return recommendedBooks;
     }
 
     private int parseYear(String yearString) {
