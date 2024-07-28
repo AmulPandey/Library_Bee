@@ -41,10 +41,7 @@ An Android application designed to manage library users and facilitate connectio
 </p>
 
 ## **Demo**
-<p align="center">
-  <a href="https://github.com/AmulPandey/Library_Bee/blob/main/app/src/main/assets/Library_Bee_Demo.mp4">Watch the demo video</a>
-</p>
-
+https://github.com/user-attachments/assets/9f5eee4a-7836-4b91-af20-8ea288f9fdd4
 
 ## Contact
 
