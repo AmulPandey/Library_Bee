@@ -57,6 +57,12 @@ public class Login extends AppCompatActivity {
         initializeViews();
         auth = FirebaseAuth.getInstance();
         checkCurrentUser();
+        if (isLoggedInAsAdmin()) {
+            navigateToDashboard("Admin");
+            finish();
+        } else {
+            checkCurrentUser();
+        }
         setListeners();
 
         // Initialize Firebase Remote Config
@@ -96,6 +102,12 @@ public class Login extends AppCompatActivity {
             navigateToDashboard(userType);
             finish();
         }
+    }
+
+    private boolean isLoggedInAsAdmin() {
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String userType = prefs.getString("UserType", "");
+        return "Admin".equals(userType);
     }
 
     private void setListeners() {

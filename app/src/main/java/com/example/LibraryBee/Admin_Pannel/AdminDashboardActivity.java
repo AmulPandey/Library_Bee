@@ -81,6 +81,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         darkModeToggle = headerView.findViewById(R.id.dark_mode_toggle);
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference();
+
+        String adminId = "LibraryBee";
+        Admin admin = new Admin(adminId);
+
+        DatabaseReference adminRef = databaseReference.child("admin");
+        adminRef.setValue(admin);
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LibraryBeePrefs", Context.MODE_PRIVATE);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
@@ -310,6 +318,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 .setPositiveButton("Logout", (dialog, which) -> {
                     // Sign out
                     auth.signOut();
+                    clearUserType();
 
                     // Redirect to the login page
                     Intent loginIntent = new Intent(this, Login.class);
@@ -322,6 +331,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 });
 
         builder.create().show();
+    }
+
+    private void clearUserType() {
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        prefs.edit().clear().apply();
     }
 
 

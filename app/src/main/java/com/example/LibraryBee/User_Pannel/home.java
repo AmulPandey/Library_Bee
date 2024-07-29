@@ -1,5 +1,6 @@
 package com.example.LibraryBee.User_Pannel;
 
+import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.animation.ObjectAnimator;
@@ -95,7 +96,7 @@ public class home extends Fragment {
         darkModeToggle = headerView.findViewById(R.id.dark_mode_toggle);
 
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("LibraryBeePrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("LibraryBeePrefs", MODE_PRIVATE);
         boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
 
         darkModeToggle.setChecked(isDarkMode);
@@ -362,7 +363,7 @@ public class home extends Fragment {
                 .setPositiveButton("Logout", (dialog, which) -> {
                     // Sign out
                     auth.signOut();
-
+                    clearUserType();
                     // Redirect to the login page
                     Intent loginIntent = new Intent(getActivity(), Login.class);
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -374,6 +375,11 @@ public class home extends Fragment {
                 });
 
         builder.create().show();
+    }
+
+    private void clearUserType() {
+        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        prefs.edit().clear().apply();
     }
 
 
