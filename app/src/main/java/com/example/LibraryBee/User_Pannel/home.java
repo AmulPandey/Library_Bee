@@ -67,7 +67,7 @@ public class home extends Fragment {
     private Button btn2;
     private Button btn3;
     private Button btn4;
-    private Button btn5;
+    private Button btn6;
     private TextView usernameTextView;
     private ShapeableImageView profileImageView;
     private View fragmentRootLayout;
@@ -257,7 +257,7 @@ public class home extends Fragment {
         btn2 = view.findViewById(R.id.btn2);
         btn3 = view.findViewById(R.id.btn3);
         btn4 = view.findViewById(R.id.btn4);
-        btn5 = view.findViewById(R.id.btn5);
+        btn6 = view.findViewById(R.id.btn6);
         // Set click listener and start activity
 
 
@@ -271,7 +271,7 @@ public class home extends Fragment {
                 startActivity(intent);
             }
         });
-        btn5.setOnClickListener(new View.OnClickListener() {
+        btn6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), BookRecommendActivity.class);

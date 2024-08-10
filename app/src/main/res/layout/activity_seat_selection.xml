@@ -2,7 +2,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -11,45 +10,84 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/BackgroundColor"
+        android:paddingTop="?attr/actionBarSize"
         android:padding="8dp">
+
+        <!-- Button to select slot -->
+
+        <!-- RadioGroup -->
+
+        <!-- Button to select seat -->
+        <Button
+            android:id="@+id/buttonSelectSlot"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_btn"
+            android:text="Select Slot"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:id="@+id/radioGroupSlots"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:layout_marginTop="25dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/buttonSelectSlot">
 
             <RadioButton
                 android:id="@+id/radioFullDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Full Day"
+                android:layout_marginRight="10dp"
+                android:button="@drawable/radio_button_background"
+                android:text=" Full Day"
                 android:textColor="@color/radio_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/radioMorning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Morning"
+                android:text=" Morning"
+                android:layout_marginRight="10dp"
+                android:button="@drawable/radio_button_background"
                 android:textColor="@color/radio_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/radioEvening"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Evening"
+                android:text=" Evening"
+                android:button="@drawable/radio_button_background"
                 android:textColor="@color/radio_button_text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </RadioGroup>
 
+        <Button
+            android:id="@+id/buttonBetween"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/custom_btn"
+            android:text="Select Seat"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupSlots" />
+
+        <!-- CardView -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="0dp"
@@ -57,11 +95,9 @@
             android:layout_margin="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroupSlots"
-            app:layout_constraintVertical_bias="0.25">
+            app:layout_constraintTop_toBottomOf="@+id/buttonBetween">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -94,32 +130,34 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:id="@+id/imageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/colorchart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintHorizontal_bias="0.0" />
+        <!-- ImageButton -->
+        <ImageView
+            android:id="@+id/imageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:src="@drawable/colorchart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0" />
 
-    <Button
-        android:id="@+id/btnConfirm"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:background="@drawable/custom_btn"
-        android:text="Confirm"
-        android:textColor="@color/black"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintHorizontal_bias="1.0" />
+        <!-- Confirm Button -->
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_btn"
+            android:text="Confirm"
+            android:textColor="@color/black"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintHorizontal_bias="1.0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+</ScrollView>

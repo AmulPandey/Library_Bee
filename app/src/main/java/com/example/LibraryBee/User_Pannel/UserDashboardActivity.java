@@ -46,6 +46,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_dashboard);
 
+
         FirebaseApp.initializeApp(this);
 
         progressDialog = new ProgressDialog(this);
