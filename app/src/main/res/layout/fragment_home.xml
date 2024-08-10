@@ -22,6 +22,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:id="@+id/fragment_root_layout"
+        android:paddingTop="?attr/actionBarSize"
         android:background="@drawable/background_dashboard"
         tools:context=".HomeFragment">
 
