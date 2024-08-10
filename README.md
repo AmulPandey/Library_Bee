@@ -44,7 +44,7 @@ An Android application designed to manage library users and facilitate connectio
 </p>
 
 ## **Preview**
-[https://github.com/user-attachments/assets/9f5eee4a-7836-4b91-af20-8ea288f9fdd4](https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145)
+https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145
 
 ## Contact
 
