@@ -30,6 +30,7 @@ An Android application designed to manage library users and facilitate connectio
 * SpringBoot: Backend server for managing user subscriptions.
 
 ## **Screenshots**
+
 <p align="center">
 <img alt="Overview1"  src="https://github.com/AmulPandey/Library_Bee/blob/main/app/src/main/assets/LibraryScreenshot1.jpg">
 </p>
@@ -44,7 +45,8 @@ An Android application designed to manage library users and facilitate connectio
 </p>
 
 ## **Preview**
-https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145
+
+[![Thumbnail Preview](https://github.com/AmulPandey/Library_Bee/blob/main/app/src/main/assets/thumbnail.jpg)](https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145)
 
 ## Contact
 
