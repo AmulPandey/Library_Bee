@@ -46,7 +46,7 @@ An Android application designed to manage library users and facilitate connectio
 
 ## **Preview**
 
-[![Thumbnail Preview](https://github.com/AmulPandey/Library_Bee/blob/main/app/src/main/assets/thumbnail.jpg)](https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145)
+[![Thumbnail Preview](https://raw.githubusercontent.com/AmulPandey/Library_Bee/main/app/src/main/assets/thumbnail.jpg)](https://github.com/user-attachments/assets/5e9d1d2e-1f89-418b-a9f3-74205e1ac145)
 
 
 ## Contact
