@@ -1,5 +1,5 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:bottom="20dp"
+    <item android:bottom="0dp"
         >
         <shape android:shape="rectangle" >
             <size android:height="100dp" />

@@ -32,11 +32,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="31dp"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/gridLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -50,25 +53,27 @@
                 android:id="@+id/usernameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="5dp"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
+
         <GridLayout
             android:id="@+id/gridLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="125dp"
             android:columnCount="2"
             android:rowCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.120000005"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             tools:ignore="ExtraText">
 
             <Button
@@ -131,7 +136,6 @@
             />
 
         </GridLayout>
-
 
         <Button
             android:id="@+id/btn5"

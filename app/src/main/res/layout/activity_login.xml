@@ -16,14 +16,12 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
         android:layout_width="275dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_height="290dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.050000012"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/log" />
@@ -32,6 +30,7 @@
         android:id="@+id/loginLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp"
@@ -39,8 +38,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView"
-        app:layout_constraintVertical_bias="0.267">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <!-- Add your EditText, Button, and TextView here -->
 
@@ -141,7 +140,7 @@
             android:layout_gravity="center"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading_anim" />
+            app:lottie_rawRes="@raw/loadinglogin" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

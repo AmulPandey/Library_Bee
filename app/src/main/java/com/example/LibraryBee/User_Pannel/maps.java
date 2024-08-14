@@ -35,6 +35,12 @@ public class maps extends Fragment {
             LatLng kanpur = new LatLng(26.43491361249834, 80.32606457897013);
             googleMap.addMarker(new MarkerOptions().position(kanpur).title("Library Bee"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(kanpur));
+
+            // Set the initial zoom level and position the camera on the marker
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kanpur, 5f));
+
+            // Animate the zoom to the desired level
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(13f), 2000, null);
         }
     };
 

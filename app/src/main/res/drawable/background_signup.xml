@@ -4,17 +4,17 @@
     <item android:bottom="0dp">
         <shape android:shape="rectangle">
             <solid android:color="#FFFF" /> <!-- Changed color to yellow -->
-             /> <!-- Rounded corners -->
+            /> <!-- Rounded corners -->
         </shape>
     </item>
 
     <!-- White color at the top -->
-    <item android:top="350dp">
+    <item android:top="300dp">
         <shape android:shape="rectangle">
             <solid android:color="#FBC02D" /> <!-- Changed color to white -->
             <corners android:radius="45dp"
-                     android:bottomLeftRadius="0dp"
-                     android:bottomRightRadius="0dp"/> <!-- Rounded corners -->
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp"/> <!-- Rounded corners -->
         </shape>
     </item>
 

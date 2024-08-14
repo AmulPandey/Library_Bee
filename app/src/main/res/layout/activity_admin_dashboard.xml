@@ -9,8 +9,6 @@
     tools:context=".User_Pannel.home">
 
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -51,14 +49,14 @@
             android:id="@+id/userlistbutton"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="152dp"
+            android:layout_marginTop="250dp"
             android:background="@drawable/custom_btn"
             android:text="List Of Users"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button2"
